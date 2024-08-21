@@ -1,12 +1,13 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  blob,
   index,
   int,
   primaryKey,
   sqliteTableCreator,
   text,
 } from "drizzle-orm/sqlite-core";
-import { type AdapterAccount } from "next-auth/adapters";
+import type { AdapterAccount } from "next-auth/adapters";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -114,3 +115,17 @@ export const verificationTokens = createTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   })
 );
+
+
+export const projects = createTable("project", {
+  id: text("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  projectName: text("projectName", { length: 255 }),
+  projectDescription: text("", { length: 255 }).notNull(),
+  category: text("category", {"enum": ["Art", "Cosplay", "Coding", "Robotics", "Electronics", "Tools", "Woodworking", "Mechanical", "Other"]}).notNull(),
+  projectImage: text("projectImage", { length: 255 }),
+  // steps: text("steps", { length: 255 }).notNull(),
+  author: text("author", { length: 255 }).notNull(),
+});
