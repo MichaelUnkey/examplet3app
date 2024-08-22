@@ -43,7 +43,7 @@ export async function Header() {
 				/>
 				<div className="my-auto ml-4">
 					{session?.user ? (<Avatar className="my-auto h-8 w-8">
-						<AvatarImage src={""} alt="user icon" />
+						<AvatarImage src={session.user.image} alt="user icon" />
 						<AvatarFallback className="border-2 border-black/70">{"MS"}</AvatarFallback>
 					</Avatar>) : <p>Guest</p>}
 					
