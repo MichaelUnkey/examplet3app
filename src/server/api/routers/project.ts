@@ -5,18 +5,33 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { posts } from "~/server/db/schema";
+import { projects } from "~/server/db/schema";
 
 export const projectRouter = createTRPCRouter({
  
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(z.object({
+      projectName: z.string().min(3),
+      projectDescription: z.string(),
+      category: z.enum(["Art", "Cosplay", "Coding", "Robotics", "Electronics", "Tools", "Woodworking", "Mechanical", "Other"]),
+      // projectImage: 
+      // steps: z.array(z.string()),
+      created_by: z.string(),
+    }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(posts).values({
-        name: input.name,
-        createdById: ctx.session.user.id,
-      });
+      console.log("Working ");
+      
+      await ctx.db.insert(projects).values({
+        id: crypto.randomUUID(),
+        projectName: input.projectName,
+        created_by: ctx.session.user.id,
+        likes: 0,
+        makes: 0,
+        projectDescription: input.projectDescription,
+        category: input.category,
+        // projectImage: input.projectImage,
+        // steps: [],
+        createdAt: new Date(Date.now()),
+      })
     }),
-
-  
 });

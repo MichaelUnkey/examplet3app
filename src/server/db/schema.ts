@@ -120,12 +120,48 @@ export const verificationTokens = createTable(
 export const projects = createTable("project", {
   id: text("id", { length: 255 })
     .notNull()
-    .primaryKey()
+    .primaryKey() 
     .$defaultFn(() => crypto.randomUUID()),
   projectName: text("projectName", { length: 255 }),
-  projectDescription: text("", { length: 255 }).notNull(),
+  created_by: text("created_by", { length: 255 })
+		.notNull()
+		.references(() => users.id),
+  likes: int("likes", { mode: "number" }).default(0),
+	makes: int("makes", { mode: "number" }).default(0),
+  projectDescription: text("projectDescription", { length: 255 }).notNull(),
   category: text("category", {"enum": ["Art", "Cosplay", "Coding", "Robotics", "Electronics", "Tools", "Woodworking", "Mechanical", "Other"]}).notNull(),
   projectImage: text("projectImage", { length: 255 }),
-  // steps: text("steps", { length: 255 }).notNull(),
-  author: text("author", { length: 255 }).notNull(),
+  steps: text('steps', { mode: 'json' })
+  .notNull()
+  .$type<string[]>()
+  .default(sql`(json_array())`),
+  createdAt: int("created_at", { mode: "timestamp" })
+		.default(sql`(unixepoch())`)
+		.notNull(),
+	updatedAt: int("updatedAt", { mode: "timestamp" }).$onUpdate(
+		() => sql`(unixepoch())`,
+	),
 });
+
+
+export const steps = createTable("step", {
+  id: text("id", { length: 255 })
+    .notNull()
+    .primaryKey(),
+  title: text("name", { length: 255 }),
+  projectId: text("created_by", { length: 255 })
+		.notNull()
+		.references(() => users.id),
+  description: text("description", { length: 255 }).notNull(),
+  projectImage: text("projectImage", { length: 255 }),
+  createdAt: int("created_at", { mode: "timestamp" })
+		.default(sql`(unixepoch())`)
+		.notNull(),
+	updatedAt: int("updatedAt", { mode: "timestamp" }).$onUpdate(
+		() => sql`(unixepoch())`,
+	),
+});
+
+export const stepRelations = relations(steps, ({ one }) => ({
+  project: one(projects, { fields: [steps.projectId], references: [projects.id] }),
+}));
