@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Header } from "./components/header";
 import { Categories } from "./components/categories";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
 	title: "Openapi Example App",
@@ -16,16 +17,19 @@ export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang="en" className={`${GeistSans.variable}`}>
+		<html lang="en" className={`${GeistSans.variable}`}><TRPCReactProvider>
 			<body className="max-w-[2160px] mx-auto bg-gradient-to-b h-screen">
-				<TRPCReactProvider>
+				
 					<Header />
 					<div className="w-full flex flex-row bg-gray-200">
 						<Categories />
 						{children}{" "}
+						{/* <Toaster /> */}
 					</div>
-				</TRPCReactProvider>
+					
+				
 			</body>
+			</TRPCReactProvider>
 		</html>
 	);
 }

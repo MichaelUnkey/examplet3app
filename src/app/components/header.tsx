@@ -1,17 +1,14 @@
 
 import Link from "next/link";
-import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { userAgent } from "next/server";
 import { getServerAuthSession } from "~/server/auth";
 
 export async function Header() {
 	const session = await getServerAuthSession();
 	const navLinks = [
 		{ name: "Home", path: "/" },
-		{ name: "Upload", path: "/create" },
-		{ name: "Profile", path: "/profile" },
-		{ name: session?.user ? "Sign Out" : "Sign In", path: session?.user ? "/api/auth/signout" : "/api/auth/signin" }
+		{ name: "Projects", path: "/projects" },
+		{ name: session?.user ? "Sign Out" : "Sign In", path: session?.user ? "/api/trpc/auth/signout" : "/api/auth/signin" }
 	];
 	
 	return (
@@ -43,8 +40,8 @@ export async function Header() {
 				/>
 				<div className="my-auto ml-4">
 					{session?.user ? (<Avatar className="my-auto h-8 w-8">
-						<AvatarImage src={session.user.image} alt="user icon" />
-						<AvatarFallback className="border-2 border-black/70">{"MS"}</AvatarFallback>
+						<AvatarImage src={session?.user?.image ?? undefined } alt="user icon" />
+						<AvatarFallback className="border-2 border-black/70">{}</AvatarFallback>
 					</Avatar>) : <p>Guest</p>}
 					
 					{/* Needs auth and userMenu component */}

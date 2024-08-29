@@ -1,7 +1,5 @@
 "use client";
-import { BlendingModeIcon, TableIcon} from "@radix-ui/react-icons"
 import Link from "next/link";
-import { useState } from "react";
 import { Binary, VenetianMask, Bot, CircuitBoard, Brush, Hammer, TreeDeciduous, Cog, Cuboid} from 'lucide-react';
 export function Categories() {
 	return (
