@@ -11,11 +11,13 @@ export default async function Page({
 		category: params.category,
 	});
 	const projectList = res instanceof TRPCError ? null : res;
+console.log(projectList);
 
 	return (
 		<div className="flex flex-col w-full">
-			<PageTitle title={params.category} />
-
+			<div className="flex flex-row w-full">
+			<PageTitle title={params.category.charAt(0).toUpperCase() + params.category.substring(1)} />
+			</div>
 			<div className="flex flex-row w-full flex-wrap p-8 gap-6 mx-auto justify-center">
 				{projectList?.map((project) => {
 					return (

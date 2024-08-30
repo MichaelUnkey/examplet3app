@@ -41,7 +41,12 @@ export default async function Page({
 									width={1920}
 									height={1080}
 								/>
-								
+								<Button
+									variant={"ghost"}
+									className="absolute top-4 right-4 bg-white h-22 w-22 px-2 rounded-xl shadow-md shadow-slate-600 border border-slate-400"
+								>
+									<Edit2Icon className="" size={14} />
+								</Button>
 							</div>
 						</div>
 						<div className="flex flex-col w-full">

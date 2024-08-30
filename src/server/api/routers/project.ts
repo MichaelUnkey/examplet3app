@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { projects } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 
@@ -51,7 +51,7 @@ export const projectRouter = createTRPCRouter({
 			});
 			return project ?? new TRPCError({ code: "NOT_FOUND" });
 		}),
-	getLatestProjects: protectedProcedure
+	getLatestProjects: publicProcedure
 		.input(
 			z.object({
 				limit: z.number().optional(),
@@ -64,7 +64,7 @@ export const projectRouter = createTRPCRouter({
 			});
 			return project ?? new TRPCError({ code: "NOT_FOUND" });
 		}),
-		getProjectsByCategory: protectedProcedure
+	getProjectsByCategory: publicProcedure
 		.input(
 			z.object({
 				category: z.string().min(3),
@@ -72,7 +72,9 @@ export const projectRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			const project = await ctx.db.query.projects.findMany({
-				where: eq(projects.category, input.category),
+				where: eq(projects.category, input.category.toLowerCase()),
+				orderBy: (projects, { desc }) => [desc(projects.createdAt)],
+				limit: 50,
 			});
 			return project ?? new TRPCError({ code: "NOT_FOUND" });
 		}),

@@ -6,6 +6,9 @@ import { ProjectCard } from "./components/projectCard";
 import PageTitle from "./components/pageTitle";
 export default async function Home() {
 	const session = await getServerAuthSession();
+	if(!session) {
+		return redirect("/api/auth/signin");
+	}
 	const res = await api.project.getLatestProjects({
 		limit: 10,
 	});

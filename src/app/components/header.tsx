@@ -1,10 +1,13 @@
 
+"use client"
+
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { getServerAuthSession } from "~/server/auth";
+import { revalidatePath } from "next/cache";
+import type { Session } from "next-auth";
 
-export async function Header() {
-	const session = await getServerAuthSession();
+export function Header( session: Session | undefined) {
+	
 	const navLinks = [
 		{ name: "Home", path: "/" },
 		{ name: "Projects", path: "/projects" },
@@ -15,8 +18,8 @@ export async function Header() {
 		
 		<div className="flex flex-row w-full h-16 border border-b-4 border-gray-300 position">
 			
-			<div className="my-auto pl-4 w-1/6">
-				<p>Project Share</p>
+			<div className="my-auto pl-4 w-1/6 pr-8">
+				<p className="whitespace-nowrap text-lg font-bold">Project Share</p>
 			</div>
 			<div className="flex flex-row gap-8 my-auto w-full ">
 				{navLinks.map((link) => (
@@ -28,7 +31,7 @@ export async function Header() {
 					</div>
 					:
 					<div key={link.name} className="flex flex- mx-4 font-semibold">
-						<Link href={link.path}>
+						<Link href={link.path} onClick={() => revalidatePath("/")}>
 							<p>{link.name}</p>
 						</Link>
 					</div>

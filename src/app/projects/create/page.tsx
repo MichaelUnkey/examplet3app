@@ -4,7 +4,7 @@ import { ProjectForm } from "~/app/components/project-form";
 
 export default function Page() {
   return (
-    <main className="mx-auto flex min-h-screen w-full flex-col items-center justify-center bg-slate-900 text-slate-50">
+    <main className="mx-auto flex min-h-screen w-full flex-col items-center justify-center text-slate-900 bg-slate-200">
       <ProjectForm />
     </main>
   );

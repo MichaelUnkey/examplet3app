@@ -109,14 +109,14 @@ export function ProjectForm(): React.JSX.Element {
 			toast("Failed to create project.");
 			return;
 		}
-		router.push(`/projects/${project.insertedId}`);
+		router.push(`/projects/edit/${project.insertedId}`);
 		form.reset();
 		form.setValue("category", "");
 		console.log("After Mutation");
 	}
 
 	return (
-		<div className="mx-auto flex flex-col">
+		<div className="mx-auto flex flex-col p-24 bg-white rounded-lg text-black">
 			<h1 className="mb-6 text-4xl">New Project</h1>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -130,7 +130,7 @@ export function ProjectForm(): React.JSX.Element {
 							<FormItem>
 								<FormLabel>Project Name</FormLabel>
 								<FormControl>
-									<Input placeholder="Project Name" {...field} />
+									<Input placeholder="Project Name" {...field} className="shadow-inner shadow-slate-200 bg-slate-300/30"/>
 								</FormControl>
 
 								<FormMessage />
@@ -148,13 +148,14 @@ export function ProjectForm(): React.JSX.Element {
 								<Select
 									onValueChange={field.onChange}
 									defaultValue={field.value}
+									
 								>
 									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder="Select a category" />
+										<SelectTrigger className="shadow-inner shadow-slate-200 bg-slate-300/30">
+											<SelectValue placeholder="Select a category " />
 										</SelectTrigger>
 									</FormControl>
-									<SelectContent>
+									<SelectContent className="shadow-inner shadow-slate-200 bg-slate-200">
 										<SelectItem value="Art">Art</SelectItem>
 										<SelectItem value="Cosplay">Cosplay</SelectItem>
 										<SelectItem value="Coding">Coding</SelectItem>
@@ -182,7 +183,7 @@ export function ProjectForm(): React.JSX.Element {
 									<Textarea
 										placeholder="Project Description"
 										{...field}
-										className="to-slate-900"
+										className="shadow-inner shadow-slate-200 bg-slate-300/30"
 									/>
 								</FormControl>
 								<FormMessage className="relative mt-4 text-red-600" />
@@ -199,6 +200,7 @@ export function ProjectForm(): React.JSX.Element {
 								<FormItem>
 									<FormControl>
 										<Input
+										className="shadow-inner shadow-slate-200 bg-slate-300/30"
 											multiple={false}
 											onChange={ (e) =>  e.target.files ? handleImageChange(e.target?.files as FileList): null}
 											type="file"
@@ -211,13 +213,15 @@ export function ProjectForm(): React.JSX.Element {
 					</div>
 
 					<hr className="border border-white/10" />
+					<div className="flex w-full justify-end"> 
 					<Button
 						disabled={!form.formState.isValid}
 						type="submit"
-						className="border border-white disabled:border-red-600"
+						className="items-end text-white font-semibold border border-slate-700 disabled:border-red-600 shadow-xl shadow-slate-200 bg-slate-800"
 					>
 						Next
 					</Button>
+					</div>
 				</form>
 			</Form>
 		</div>

@@ -1,11 +1,10 @@
-"use client";
 
 import Image from "next/image"; // Import the Image component from the appropriate package
 
 import { Rocket, Hammer } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import Link from "next/link";
-
+import { getServerAuthSession } from "~/server/auth";
 type ProjectCardProps = {
 	projectName: string | null;
 	category: string;
@@ -20,12 +19,14 @@ type ProjectCardProps = {
 	steps: string[];
 };
 
-export function ProjectCard({
+export async function ProjectCard({
 	project
 
 }: { project: ProjectCardProps }) {
+	const session = await getServerAuthSession();
+	
 	return (
-		<Link href={`/projects/${project.id}/`}>
+		<Link href={session?.user.id === project.created_by ? `/projects/edit/${project.id}/` : `/projects/${project.id}/`}>
 			<Card className="w-full h-0 bg-white/80 shadow-xl shadow-slate-700/70 rounded-2xl aspect-w-2 aspect-h-3">
 				<CardContent className="p-2 object-cover h-full">
 					<div className="aspect-w-16 aspect-h-9">
