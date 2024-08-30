@@ -21,10 +21,10 @@ export default function RootLayout({
 			<body className="max-w-[2160px] mx-auto bg-gradient-to-b h-screen">
 				
 					<Header />
-					<div className="w-full flex flex-row bg-gray-200">
+					<div className="w-full flex flex-row bg-slate-600">
 						<Categories />
 						{children}{" "}
-						{/* <Toaster /> */}
+						<Toaster />
 					</div>
 					
 				

@@ -18,13 +18,9 @@ import { toast } from "./ui/toaster";
 import { api } from "~/trpc/react";
 import { useState } from "react";
 import type { ProjectSchema } from "~/lib/types";
-// type FormData = {
-// 	title: string;
-// 	description: string;
-// 	stepNumber: number;
-// 	projectId: string;
-// 	image: string;
-// };
+import { revalidatePath } from "next/cache";
+
+
 const ACCEPTED_IMAGE_TYPES = ["image/*,.jpeg", "image/*,.jpg", "image/*,.png"];
 const formSchema = z.object({
 	title: z.string().min(2).max(50),
@@ -39,7 +35,8 @@ const formSchema = z.object({
 		.refine(
 			(file) => !ACCEPTED_IMAGE_TYPES.includes(file?.type),
 			"Only .jpg, .jpeg and .png formats are supported.",
-		),
+		)
+		.optional(),
 });
 
 // Import the ProjectSchema type from the appropriate module
@@ -59,9 +56,7 @@ export function StepForm({
 			form.reset();
 		},
 		onError: (error) => {
-			toast(
-				`Step Creation Failed ${error.message}`,
-			);
+			toast(`Step Creation Failed ${error.message}`);
 		},
 	});
 
@@ -103,18 +98,19 @@ export function StepForm({
 		await createStep.mutateAsync({
 			title: values.title,
 			description: values.description,
-			stepNumber: stepNumber,
+			stepNumber: project.steps.length + 1,
 			projectId: values.projectId,
 			image: stepImage,
 		});
+		revalidatePath(`/project/${project.id}`);
 		form.reset();
 		form.setValue("title", "");
 		form.setValue("description", "");
 		console.log("After Mutation");
 	}
 	return (
-		<div className="mx-auto flex flex-col mt-6 w-full px-6">
-			<h1 className="mb-6 text-4xl">Steps</h1>
+		<div className="mx-auto flex flex-col mt-12 w-full px-6 text-center">
+			<h1 className="mb-6 text-2xl font-semibold">Add Step</h1>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 					<hr className="border border-white/10" />
@@ -124,9 +120,9 @@ export function StepForm({
 						render={({ field }) => (
 							// <div className="flex flex-col gap-4">
 							<FormItem>
-								<FormLabel>Step Title</FormLabel>
+								<FormLabel>Title</FormLabel>
 								<FormControl>
-									<Input placeholder="Project Name" {...field} />
+									<Input placeholder="Title" {...field} />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -140,7 +136,7 @@ export function StepForm({
 							<FormItem>
 								<FormLabel>Description</FormLabel>
 								<Textarea
-									placeholder="Step Description"
+									placeholder="Description"
 									{...field}
 									className="to-slate-900"
 								/>
@@ -168,19 +164,6 @@ export function StepForm({
 								</FormItem>
 							)}
 						/>
-						{/* {isFilePicked ? (
-							<div>
-								<p>Filename: {selectedFile?.name}</p>
-								<p>Filetype: {selectedFile?.type}</p>
-								<p>Size in bytes: {selectedFile?.size}</p>
-								<p>
-									lastModifiedDate:{" "}
-									{selectedFile?.lastModified?.toLocaleString()}
-								</p>
-							</div>
-						) : (
-							<p>Select a file to show details</p>
-						)} */}
 					</div>
 					<hr className="border border-white/10" />
 					<Button

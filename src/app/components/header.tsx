@@ -8,11 +8,13 @@ export async function Header() {
 	const navLinks = [
 		{ name: "Home", path: "/" },
 		{ name: "Projects", path: "/projects" },
-		{ name: session?.user ? "Sign Out" : "Sign In", path: session?.user ? "/api/trpc/auth/signout" : "/api/auth/signin" }
+		{ name: session?.user ? "Sign Out" : "Sign In", path: session?.user ? "/api/auth/signout" : "/api/auth/signin" }
 	];
 	
 	return (
-		<div className="flex flex-row w-full h-16 border border-b-4 border-gray-300">
+		
+		<div className="flex flex-row w-full h-16 border border-b-4 border-gray-300 position">
+			
 			<div className="my-auto pl-4 w-1/6">
 				<p>Project Share</p>
 			</div>
@@ -48,6 +50,7 @@ export async function Header() {
 					
 				</div>
 			</div>
+		
 		</div>
 	);
 }

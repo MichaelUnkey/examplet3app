@@ -1,11 +1,36 @@
+import { TRPCError } from "@trpc/server";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
-import { HydrateClient } from "~/trpc/server";
-
+import { api } from "~/trpc/server";
+import { ProjectCard } from "./components/projectCard";
+import PageTitle from "./components/pageTitle";
 export default async function Home() {
-  const session = await getServerAuthSession();
-  return (session?.user ?
-    <div>Please Sign In</div>
-    : redirect("/api/auth/signin")
-  );
+	const session = await getServerAuthSession();
+	const res = await api.project.getLatestProjects({
+		limit: 10,
+	});
+	const projectList = res instanceof TRPCError ? null : res;
+
+	return session?.user ? (
+		<div className="flex flex-col w-full">
+      <PageTitle title="Recent Projects" />
+		
+			<div className="flex flex-row w-full flex-wrap p-8 gap-6 mx-auto justify-center">
+				{projectList?.map((project) => {
+					return (
+						<>
+							<div
+								key={project.id}
+								className="flex flex-col w-1/5"
+							>
+								<ProjectCard project={project} />
+							</div>
+						</>
+					);
+				})}
+			</div>
+		</div>
+	) : (
+		redirect("/api/auth/signin")
+	);
 }

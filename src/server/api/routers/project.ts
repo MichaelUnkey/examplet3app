@@ -1,9 +1,6 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import {
-	createTRPCRouter,
-	protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { projects } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 
@@ -19,17 +16,20 @@ export const projectRouter = createTRPCRouter({
 			}),
 		) //Handle some kind of return or error if needed
 		.mutation(async ({ ctx, input }) => {
-			const project = await ctx.db.insert(projects).values({
-				id: crypto.randomUUID(),
-				projectName: input.projectName,
-				created_by: ctx.session.user.id,
-				likes: 0,
-				makes: 0,
-				projectDescription: input.projectDescription,
-				category: "Coding",
-				projectImage: input.projectImage ?? undefined,
-				createdAt: new Date(Date.now()),
-			}).returning({insertedId: projects.id});
+			const project = await ctx.db
+				.insert(projects)
+				.values({
+					id: crypto.randomUUID(),
+					projectName: input.projectName,
+					created_by: ctx.session.user.id,
+					likes: 0,
+					makes: 0,
+					projectDescription: input.projectDescription,
+					category: "Coding",
+					projectImage: input.projectImage ?? undefined,
+					createdAt: new Date(Date.now()),
+				})
+				.returning({ insertedId: projects.id });
 			return project[0];
 		}),
 	getUserProjects: protectedProcedure.query(async ({ ctx }) => {
@@ -51,6 +51,31 @@ export const projectRouter = createTRPCRouter({
 			});
 			return project ?? new TRPCError({ code: "NOT_FOUND" });
 		}),
+	getLatestProjects: protectedProcedure
+		.input(
+			z.object({
+				limit: z.number().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const project = await ctx.db.query.projects.findMany({
+				orderBy: (projects, { desc }) => [desc(projects.createdAt)],
+				limit: input.limit ?? 10,
+			});
+			return project ?? new TRPCError({ code: "NOT_FOUND" });
+		}),
+		getProjectsByCategory: protectedProcedure
+		.input(
+			z.object({
+				category: z.string().min(3),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const project = await ctx.db.query.projects.findMany({
+				where: eq(projects.category, input.category),
+			});
+			return project ?? new TRPCError({ code: "NOT_FOUND" });
+		}),
 	setProjectName: protectedProcedure
 		.input(
 			z.object({
@@ -59,15 +84,16 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const res = await ctx.db.update(projects)
+			const res = await ctx.db
+				.update(projects)
 				.set({
 					projectName: input.projectName,
 				})
 				.where(eq(projects.id, input.projectId));
-				return res;
-				// if(res.rowsAffected === 0) {
-				// 	return false;
-				// }
-				// return  true;
+			return res;
+			// if(res.rowsAffected === 0) {
+			// 	return false;
+			// }
+			// return  true;
 		}),
 });

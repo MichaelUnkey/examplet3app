@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Binary, VenetianMask, Bot, CircuitBoard, Brush, Hammer, TreeDeciduous, Cog, Cuboid} from 'lucide-react';
 export function Categories() {
 	return (
-		<div className="flex w-48 h-screen justify-start p-4 bg-white">
+		<div className="flex w-48 h-screen justify-start p-4 bg-white sticky">
 			<div className="">
                 <div className="flex flex-row gap-4"><Cuboid size="16" className="mt-1"/><h3 className="inline-block">Categories</h3></div>
 				

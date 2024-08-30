@@ -3,10 +3,11 @@
 import Image from "next/image"; // Import the Image component from the appropriate package
 
 import { Rocket, Hammer } from "lucide-react";
+import type { Session } from "next-auth";
 import { Card, CardContent } from "./ui/card";
 import Link from "next/link";
 
-type ProjectCardProps = {
+type ProjectViewProps = {
 	projectName: string | null;
 	category: string;
 	projectDescription: string;
@@ -20,12 +21,11 @@ type ProjectCardProps = {
 	steps: string[];
 };
 
-export function ProjectCard({
-	project
-
-}: { project: ProjectCardProps }) {
+export function ProjectViewUser({
+	project,
+	session,
+}: { project: ProjectViewProps; session: Session }) {
 	return (
-		<Link href={`/projects/${project.id}/`}>
 			<Card className="w-full h-0 bg-white/80 shadow-xl shadow-slate-700/70 rounded-2xl aspect-w-2 aspect-h-3">
 				<CardContent className="p-2 object-cover h-full">
 					<div className="aspect-w-16 aspect-h-9">
@@ -45,7 +45,7 @@ export function ProjectCard({
 							{project?.projectDescription}
 						</p>
 						<div className="absolute bottom-3 ">
-							<p className="inline text-left w-full">{project.created_by} </p>
+							<p className="inline text-left w-full">{session?.user.name} </p>
 						</div>
 						<div className="absolute right-4 bottom-3 space-x-3">
 							<div className="inline-block rounded-full shadow px-2.5 shadow-red-900/30">
@@ -60,6 +60,5 @@ export function ProjectCard({
 					</div>
 				</CardContent>
 			</Card>
-		</Link>
 	);
 }

@@ -1,9 +1,11 @@
 interface PageTitleProps {
-    title: string;
+	title: string;
 }
 
 const PageTitle: React.FC<PageTitleProps> = ({ title }) => {
-    return <h2 className="w-fit mx-auto bg-slate-500 text-white rounded-xl py-2 px-8 font-semibold text-2xl my-8 shadow-2xl shadow-slate-700/70">{title}</h2>;
+	return <div className="flex flex-row w-full shadow-lg  shadow-slate-700 items-start justify-center py-4 bg-gradient-to-tr from-slate-800 to-indigo-600 text-white rounded-lg mx-4 mt-4">
+			<h2 className="text-center font-semibold text-2xl">{title}</h2>
+	</div>;
 };
 
 export default PageTitle;
