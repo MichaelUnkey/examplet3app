@@ -1,17 +1,14 @@
 
-"use client"
-
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { revalidatePath } from "next/cache";
-import type { Session } from "next-auth";
+import { getServerAuthSession } from "~/server/auth";
 
-export function Header( session: Session | undefined) {
-	
+export async function Header() {
+	const session = await getServerAuthSession();
 	const navLinks = [
 		{ name: "Home", path: "/" },
 		{ name: "Projects", path: "/projects" },
-		{ name: session?.user ? "Sign Out" : "Sign In", path: session?.user ? "/api/auth/signout" : "/api/auth/signin" }
+		{ name: session?.user ? "Sign Out" : "Sign In", path: session?.user.id ? "/api/auth/signout" : "/api/auth/signin" }
 	];
 	
 	return (
@@ -31,7 +28,7 @@ export function Header( session: Session | undefined) {
 					</div>
 					:
 					<div key={link.name} className="flex flex- mx-4 font-semibold">
-						<Link href={link.path} onClick={() => revalidatePath("/")}>
+						<Link href={link.path}>
 							<p>{link.name}</p>
 						</Link>
 					</div>

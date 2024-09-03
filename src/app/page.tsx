@@ -4,9 +4,11 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { ProjectCard } from "./components/projectCard";
 import PageTitle from "./components/pageTitle";
+import type { ProjectSchema } from "~/lib/types";
 export default async function Home() {
+	type ProjectSchemaList = (typeof ProjectSchema)[];
 	const session = await getServerAuthSession();
-	if(!session) {
+	if (!session) {
 		return redirect("/api/auth/signin");
 	}
 	const res = await api.project.getLatestProjects({
@@ -16,16 +18,13 @@ export default async function Home() {
 
 	return session?.user ? (
 		<div className="flex flex-col w-full">
-      <PageTitle title="Recent Projects" />
-		
+			<PageTitle title="Recent Projects" />
+
 			<div className="flex flex-row w-full flex-wrap p-8 gap-6 mx-auto justify-center">
 				{projectList?.map((project) => {
 					return (
 						<>
-							<div
-								key={project.id}
-								className="flex flex-col w-1/5"
-							>
+							<div key={project.id} className="flex flex-col w-1/5">
 								<ProjectCard project={project} />
 							</div>
 						</>

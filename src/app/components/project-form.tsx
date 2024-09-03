@@ -27,7 +27,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "./ui/toaster";
 // const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/*,.jpeg", "image/*,.jpg", "image/*,.png"];
-
 const formSchema = z.object({
 	projectName: z.string().min(2).max(50),
 	category: z.string().min(2).max(50),
@@ -42,12 +41,20 @@ const formSchema = z.object({
 			"Only .jpg, .jpeg and .png formats are supported.",
 		)
 		.optional()
-	
 });
 
 export function ProjectForm(): React.JSX.Element {
 	const [image, setImage] = useState<string>();
 	const router = useRouter();
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			projectName: "",
+			category: undefined,
+			projectDescription: "",
+			projectImage: undefined,
+		},
+	});
 
 	const createProject = api.project.create.useMutation({
 		onMutate: () => {
@@ -62,15 +69,6 @@ export function ProjectForm(): React.JSX.Element {
 		},
 	});
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			projectName: "",
-			category: undefined,
-			projectDescription: "",
-			projectImage: undefined,
-		},
-	});
 
 	async function handleImageChange(fileList: FileList | null): Promise<string> {
 		if (!fileList) {

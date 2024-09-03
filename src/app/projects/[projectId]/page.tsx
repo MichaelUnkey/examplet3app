@@ -1,14 +1,7 @@
 import { api, HydrateClient } from "~/trpc/server";
-import { getServerAuthSession } from "~/server/auth";
 import Image from "next/image";
-import { Edit2Icon } from "lucide-react";
-import { Button } from "~/app/components/ui/button";
-import { UpdateProjectName } from "~/app/components/updateProjectName";
 import { TRPCError } from "@trpc/server";
-import { StepForm } from "~/app/components/stepForm";
 import type { ProjectSchema } from "~/lib/types";
-import { ProjectViewUser } from "~/app/components/projectViewUser";
-import { Separator } from "~/app/components/ui/separator";
 import PageTitle from "~/app/components/pageTitle";
 
 export default async function Page({
@@ -17,8 +10,7 @@ export default async function Page({
 	const res = await api.project.getProjectById({
 		projectId: params.projectId,
 	});
-	const session = await getServerAuthSession();
-	const project = res instanceof TRPCError ? null : (res as ProjectSchema);
+	const project = res instanceof TRPCError ? null : res;
 
 	const stepList = await api.step.getStepByProjectId({
 		projectId: project ? project.id : "",

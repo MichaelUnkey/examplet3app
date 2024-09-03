@@ -12,6 +12,7 @@ type ProjectCardProps = {
 	projectImage: string | null;
 	id: string;
 	created_by: string;
+	created_byName: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
 	likes: number | null;
@@ -21,7 +22,6 @@ type ProjectCardProps = {
 
 export async function ProjectCard({
 	project
-
 }: { project: ProjectCardProps }) {
 	const session = await getServerAuthSession();
 	
@@ -45,17 +45,17 @@ export async function ProjectCard({
 						<p className="h-full text-left text-wrap overflow-hidden">
 							{project?.projectDescription}
 						</p>
-						<div className="absolute bottom-3 ">
-							<p className="inline text-left w-full">{project.created_by} </p>
+						<div className="absolute bottom-3 overflow-hidden">
+							<p className="inline text-left w-full">{project.created_byName} </p>
 						</div>
-						<div className="absolute right-4 bottom-3 space-x-3">
-							<div className="inline-block rounded-full shadow px-2.5 shadow-red-900/30">
+						<div className="absolute right-4 bottom-3 space-x-1">
+							<div className="inline-block rounded-full shadow px-2 shadow-red-900/30">
 								<Rocket size={16} className="inline-block text-red-500" />
-								<p className="inline-block ml-2">{project.likes}</p>
+								<p className="inline-block ml-1">{project.likes}</p>
 							</div>
-							<div className="inline-block rounded-full shadow px-2.5 shadow-sky-600/30">
+							<div className="inline-block rounded-full shadow px-2 shadow-sky-600/30">
 								<Hammer size={16} className="inline-block text-sky-500" />
-								<p className="inline-block ml-2">{project.makes}</p>
+								<p className="inline-block ml-1">{project.makes}</p>
 							</div>
 						</div>
 					</div>

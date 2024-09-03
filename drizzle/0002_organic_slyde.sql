@@ -1,0 +1,1 @@
+ALTER TABLE `examplet3app_project` ADD `created_byName` text(255);

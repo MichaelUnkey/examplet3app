@@ -125,6 +125,7 @@ export const projects = createTable("project", {
 	created_by: text("created_by", { length: 255 })
 		.notNull()
 		.references(() => users.id),
+	created_byName: text("created_byName", { length: 255 }),
 	likes: int("likes", { mode: "number" }).default(0),
 	makes: int("makes", { mode: "number" }).default(0),
 	projectDescription: text("projectDescription").notNull(),

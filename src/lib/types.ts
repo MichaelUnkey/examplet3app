@@ -1,19 +1,5 @@
 import { z } from 'zod';
 
-export type ProjectSchema = {
-    id: string,
-    projectName: string,
-    created_by: string
-    likes: number | null,
-    makes: number
-    projectDescription: string,
-    category: string,
-    projectImage: string | null,
-    steps: string[],
-    createdAt: Date,
-    updatedAt: Date | null,
-};
-
 export const StepSchema = z.object({
     id: z.string(),
     title: z.string().min(3),
@@ -24,6 +10,23 @@ export const StepSchema = z.object({
     createdAt: z.number(),
     updatedAt: z.number().optional(),
 });
+
+export const ProjectSchema = {
+    id: z.string(),
+    projectName: z.string(),
+    created_by: z.string(),
+    created_byName: z.string(),
+    likes: z.number().optional(),
+    makes: z.number().optional(),
+    projectDescription: z.string(),
+    category: z.string(),
+    projectImage: z.string().optional(),
+    steps: z.array(StepSchema),
+    createdAt: z.number().positive(),
+    updatedAt: z.number().positive().optional(),
+};
+
+
 
 export const UserSchema = z.object({
     id: z.string(),

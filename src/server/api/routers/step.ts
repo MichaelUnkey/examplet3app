@@ -47,5 +47,43 @@ export const stepsRouter = createTRPCRouter({
 				orderBy: (steps, { desc }) => [desc(steps.stepNumber)]
 			});
 			return stepList ?? new TRPCError({ code: "NOT_FOUND" });
-		})
+		}),
+		editStep: protectedProcedure
+		.input(
+			z.object({
+				stepId: z.string().min(3),
+				stepTitle: z.string().min(3),
+				stepDescription: z.string().min(3),
+			}),
+		).mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(steps)
+				.set({
+					title: input.stepTitle,
+					description: input.stepDescription,
+					updatedAt: new Date(Date.now()),
+				})
+				.where(eq(steps.id, input.stepId));
+			return res.rowsAffected === 1
+				? true
+				: new TRPCError({ code: "NOT_FOUND" });
+		}),
+		editStepImage: protectedProcedure
+		.input(
+			z.object({
+				stepId: z.string().min(3),
+				image: z.string().optional(),
+			}),
+		).mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(steps)
+				.set({
+					stepImage: input.image,
+					updatedAt: new Date(Date.now()),
+				})
+				.where(eq(steps.id, input.stepId));
+			return res.rowsAffected === 1
+				? true
+				: new TRPCError({ code: "NOT_FOUND" });
+		}),
 });

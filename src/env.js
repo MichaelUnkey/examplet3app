@@ -24,6 +24,7 @@ export const env = createEnv({
 		),
 		GITHUB_CLIENT_ID: z.string(),
 		GITHUB_CLIENT_SECRET: z.string(),
+		UNKEY_ROOT_KEY: z.string(),
 	},
 
 	/**
@@ -40,6 +41,7 @@ export const env = createEnv({
 	 * middlewares) or client-side so we need to destruct manually.
 	 */
 	runtimeEnv: {
+		UNKEY_ROOT_KEY: process.env.UNKEY_ROOT_KEY,
 		DATABASE_URL: process.env.DATABASE_URL,
 		NODE_ENV: process.env.NODE_ENV,
 		NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

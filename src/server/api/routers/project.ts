@@ -1,6 +1,10 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import {
+	createTRPCRouter,
+	protectedProcedure,
+	publicProcedure,
+} from "~/server/api/trpc";
 import { projects } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 
@@ -22,10 +26,11 @@ export const projectRouter = createTRPCRouter({
 					id: crypto.randomUUID(),
 					projectName: input.projectName,
 					created_by: ctx.session.user.id,
+					created_byName: ctx.session.user.name,
 					likes: 0,
 					makes: 0,
 					projectDescription: input.projectDescription,
-					category: "Coding",
+					category: input.category.toUpperCase(),
 					projectImage: input.projectImage ?? undefined,
 					createdAt: new Date(Date.now()),
 				})
@@ -72,13 +77,13 @@ export const projectRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			const project = await ctx.db.query.projects.findMany({
-				where: eq(projects.category, input.category.toLowerCase()),
+				where: eq(projects.category, input.category.toUpperCase()),
 				orderBy: (projects, { desc }) => [desc(projects.createdAt)],
 				limit: 50,
 			});
 			return project ?? new TRPCError({ code: "NOT_FOUND" });
 		}),
-	setProjectName: protectedProcedure
+	editProjectName: protectedProcedure
 		.input(
 			z.object({
 				projectId: z.string().min(3),
@@ -90,6 +95,7 @@ export const projectRouter = createTRPCRouter({
 				.update(projects)
 				.set({
 					projectName: input.projectName,
+					updatedAt: new Date(Date.now()),
 				})
 				.where(eq(projects.id, input.projectId));
 			return res;
@@ -97,5 +103,60 @@ export const projectRouter = createTRPCRouter({
 			// 	return false;
 			// }
 			// return  true;
+		}),
+	editProjectImage: protectedProcedure
+		.input(
+			z.object({
+				projectId: z.string().min(3),
+				image: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(projects)
+				.set({
+					projectImage: input.image,
+					updatedAt: new Date(Date.now()),
+				})
+				.where(eq(projects.id, input.projectId));
+			return res.rowsAffected === 1
+				? true
+				: new TRPCError({ code: "NOT_FOUND" });
+		}),
+	editProjectCategory: protectedProcedure
+		.input(
+			z.object({
+				projectId: z.string().min(3),
+				category: z.string().min(3),
+			}),
+		).mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(projects)
+				.set({
+					category: input.category,
+					updatedAt: new Date(Date.now()),
+				})
+				.where(eq(projects.id, input.projectId));
+			return res.rowsAffected === 1
+				? true
+				: new TRPCError({ code: "NOT_FOUND" });
+		}),
+		editProjectDescription: protectedProcedure
+		.input(
+			z.object({
+				projectId: z.string().min(3),
+				projectDescription: z.string().min(3),
+			}),
+		).mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(projects)
+				.set({
+					projectDescription: input.projectDescription,
+					updatedAt: new Date(Date.now()),
+				})
+				.where(eq(projects.id, input.projectId));
+			return res.rowsAffected === 1
+				? true
+				: new TRPCError({ code: "NOT_FOUND" });
 		}),
 });

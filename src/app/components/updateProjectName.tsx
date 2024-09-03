@@ -1,12 +1,17 @@
 "use client";
 import { api } from "~/trpc/react";
-import { Edit2Icon } from "lucide-react";
+import { Edit2Icon, SaveIcon } from "lucide-react";
 import { Button } from "~/app/components/ui/button";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 	DialogTrigger,
-} from "~/app/components/ui/dialog";
+} from "./ui/dialog";
 import {
 	Form,
 	FormControl,
@@ -20,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
 
 export const dynamic = "force-dynamic";
 const formSchema = z.object({
@@ -34,6 +40,7 @@ type Props = {
 };
 
 export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
+	const [open, setOpen] = useState(false);
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -45,7 +52,7 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 			projectName: name,
 		},
 	});
-	const updateName = api.project.setProjectName.useMutation({
+	const updateName = api.project.editProjectName.useMutation({
 		onSuccess() {
 			toast.success("Project name updated");
 			router.refresh();
@@ -61,29 +68,39 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 			projectId: values.projectId,
 			projectName: values.projectName,
 		});
-		if (res) {
-			router.push(`/project/${projectId}`);
+		if (!res) {
+			toast("Failed to change project image.");
+			return;
 		}
+        router.refresh();
+        setOpen(false);
 	}
 	
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)}>
-				<Dialog>
-					<DialogTrigger>
-						<Button
-							variant={"ghost"}
-							className="bg-slate-800 absolute bottom-6 right-6 h-22 w-22 px-2 rounded-xl shadow-md shadow-slate-600 border border-white"
-						>
-							<Edit2Icon className=" text-white" size={22} />
-						</Button>
-					</DialogTrigger>
-					<DialogContent>
-						<div>
-							<Form {...form}>
-								<form onSubmit={form.handleSubmit(onSubmit)}>
-									<FormField
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button
+					variant={"ghost"}
+					className="absolute top-2 right-4 bg-white h-22 w-22 px-2 rounded-xl shadow-md shadow-slate-600 border border-slate-400"
+				>
+					<Edit2Icon className="" size={14} />
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-md bg-white">
+				<DialogHeader>
+					<DialogTitle>Replace Image</DialogTitle>
+					<DialogDescription>Please choose a new image.</DialogDescription>
+				</DialogHeader>
+				<div className="flex items-center space-x-2">
+					<div className="grid flex-1 gap-2">
+						<Form {...form}>
+							<form
+								onSubmit={form.handleSubmit(onSubmit)}
+								className="space-y-4"
+							>
+				
+								<FormField
 										control={form.control}
 										name="projectName"
 										render={({ field }) => (
@@ -95,13 +112,32 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 											</FormItem>
 										)}
 									/>
-									<Button type="submit">Save</Button>
-								</form>
-							</Form>
-						</div>
-					</DialogContent>
-				</Dialog>
-			</form>
-		</Form>
+								<Button
+									type="submit"
+									size="sm"
+									className="px-3 shadow shadow-slate-600"
+								>
+									<span className="sr-only">Save</span>
+									<SaveIcon className="h-4 w-4" />
+								</Button>
+							</form>
+						</Form>
+					</div>
+				</div>
+				<DialogFooter className="sm:justify-start">
+					<DialogClose asChild>
+						<Button
+							type="button"
+							variant="default"
+							className="shadow shadow-slate-600"
+						>
+							Cancel
+						</Button>
+					</DialogClose>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+					
+							
 	);
 };

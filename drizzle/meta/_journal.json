@@ -15,6 +15,13 @@
       "when": 1724939458167,
       "tag": "0001_previous_the_twelve",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1725046572376,
+      "tag": "0002_organic_slyde",
+      "breakpoints": true
     }
   ]
 }
