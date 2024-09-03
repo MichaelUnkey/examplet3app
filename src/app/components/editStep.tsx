@@ -12,7 +12,7 @@ import {
 	FormMessage,
 } from "~/app/components/ui/form";
 import { Input } from "~/app/components/ui/input";
-import { set, z } from "zod";
+import { z } from "zod";
 import { api } from "~/trpc/react";
 import { useState } from "react";
 import { toast } from "./ui/toaster";
@@ -28,24 +28,9 @@ import {
 } from "./ui/dialog";
 import { Edit2Icon, SaveIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/select";
 import { Textarea } from "./ui/textarea";
-const ACCEPTED_IMAGE_TYPES = ["image/*,.jpeg", "image/*,.jpg", "image/*,.png"];
 const formSchema = z.object({
 	stepId: z.string(),
-	stepImage: z
-		.instanceof(File)
-		.refine(
-			(file) => !ACCEPTED_IMAGE_TYPES.includes(file?.type),
-			"Only .jpg, .jpeg and .png formats are supported.",
-		)
-		.optional(),
 	stepTitle: z.string(),
 	stepDescription: z.string(),
 });

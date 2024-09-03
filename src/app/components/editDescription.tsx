@@ -11,8 +11,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "~/app/components/ui/form";
-import { Input } from "~/app/components/ui/input";
-import { set, z } from "zod";
+import { z } from "zod";
 import { api } from "~/trpc/react";
 import { useState } from "react";
 import { toast } from "./ui/toaster";
@@ -28,13 +27,7 @@ import {
 } from "./ui/dialog";
 import { Edit2Icon, SaveIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/select";
+
 import { Textarea } from "./ui/textarea";
 
 const formSchema = z.object({
@@ -43,8 +36,9 @@ const formSchema = z.object({
 });
 
 export function EditDescription({
-	projectId, description
-}: { projectId: string, description: string }): React.JSX.Element {
+	projectId,
+	description,
+}: { projectId: string; description: string }): React.JSX.Element {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
 	if (projectId === "") {
@@ -57,7 +51,7 @@ export function EditDescription({
 			description: description,
 		},
 	});
-	const changeImage = api.project.editProjectDescription.useMutation({
+	const changeDescription = api.project.editProjectDescription.useMutation({
 		onMutate: () => {
 			console.log("mutating");
 		},
@@ -69,10 +63,8 @@ export function EditDescription({
 			toast("Image Change Failed");
 		},
 	});
-
-
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const res = await changeImage.mutateAsync({
+		const res = await changeDescription.mutateAsync({
 			projectId: projectId,
 			projectDescription: values.description ?? "",
 		});
@@ -95,8 +87,8 @@ export function EditDescription({
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md bg-white">
 				<DialogHeader>
-					<DialogTitle>Change Category</DialogTitle>
-					<DialogDescription>Please choose a new category.</DialogDescription>
+					<DialogTitle>Change Description</DialogTitle>
+					<DialogDescription>Enter a project description.</DialogDescription>
 				</DialogHeader>
 				<div className="flex items-center space-x-2">
 					<div className="grid flex-1 gap-2">
@@ -108,22 +100,22 @@ export function EditDescription({
 								<hr className="border border-white/10" />
 								{/* Project Name */}
 								<FormField
-						control={form.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Description</FormLabel>
-								<FormControl>
-									<Textarea
-										placeholder="Project Description"
-										{...field}
-										className="shadow-inner shadow-slate-200 bg-slate-300/30"
-									/>
-								</FormControl>
-								<FormMessage className="relative mt-4 text-red-600" />
-							</FormItem>
-						)}
-					/>
+									control={form.control}
+									name="description"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Description</FormLabel>
+											<FormControl>
+												<Textarea
+													placeholder="Project Description"
+													{...field}
+													className="shadow-inner shadow-slate-200 bg-slate-300/30"
+												/>
+											</FormControl>
+											<FormMessage className="relative mt-4 text-red-600" />
+										</FormItem>
+									)}
+								/>
 								<Button
 									type="submit"
 									size="sm"

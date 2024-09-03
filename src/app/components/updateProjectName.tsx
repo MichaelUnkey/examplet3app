@@ -75,8 +75,6 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
         router.refresh();
         setOpen(false);
 	}
-	
-
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -89,8 +87,8 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md bg-white">
 				<DialogHeader>
-					<DialogTitle>Replace Image</DialogTitle>
-					<DialogDescription>Please choose a new image.</DialogDescription>
+					<DialogTitle>Change name</DialogTitle>
+					<DialogDescription>Please choose a new name.</DialogDescription>
 				</DialogHeader>
 				<div className="flex items-center space-x-2">
 					<div className="grid flex-1 gap-2">
@@ -99,7 +97,6 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 								onSubmit={form.handleSubmit(onSubmit)}
 								className="space-y-4"
 							>
-				
 								<FormField
 										control={form.control}
 										name="projectName"

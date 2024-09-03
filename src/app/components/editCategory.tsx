@@ -11,8 +11,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "~/app/components/ui/form";
-import { Input } from "~/app/components/ui/input";
-import { set, z } from "zod";
+import { z } from "zod";
 import { api } from "~/trpc/react";
 import { useState } from "react";
 import { toast } from "./ui/toaster";
@@ -49,7 +48,6 @@ export function EditCategory({
 	if (projectId === "") {
 		return <div>Project not found</div>;
 	}
-	const [image, setImage] = useState<string>();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -57,7 +55,7 @@ export function EditCategory({
 			category: undefined,
 		},
 	});
-	const changeImage = api.project.editProjectCategory.useMutation({
+	const changeCategory = api.project.editProjectCategory.useMutation({
 		onMutate: () => {
 			console.log("mutating");
 		},
@@ -70,33 +68,8 @@ export function EditCategory({
 		},
 	});
 
-	async function handleImageChange(fileList: FileList | null): Promise<string> {
-		if (!fileList) {
-			return "";
-		}
-		const res = new Promise<string>((resolve, reject) => {
-			const reader = new FileReader();
-			const file = fileList[0];
-			if (file) {
-				reader.readAsDataURL(file);
-				reader.onload = (readerEvent: ProgressEvent<FileReader>) => {
-					if (readerEvent.target?.result) {
-						const imageFile = reader.result as string;
-						resolve(imageFile);
-					} else {
-						reject(new Error("Failed to read image file."));
-					}
-				};
-			}
-		});
-		await res.then((imageFile) => {
-			setImage(imageFile);
-		});
-		return res;
-	}
-
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const res = await changeImage.mutateAsync({
+		const res = await changeCategory.mutateAsync({
 			projectId: projectId,
 			category: values.category ?? "",
 		});

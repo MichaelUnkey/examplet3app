@@ -4,7 +4,10 @@ import { z } from "zod";
 import {
 	createTRPCRouter,
 	protectedProcedure,
+	publicProcedure,
 } from "~/server/api/trpc";
+import { env } from "~/env";
+import { Ratelimit } from "@unkey/ratelimit";
 import { steps } from "~/server/db/schema";
 import { projects } from "~/server/db/schema";
 
@@ -21,6 +24,16 @@ export const stepsRouter = createTRPCRouter({
 			}),
 		) //Handle some kind of return or error if needed
 		.mutation(async ({ ctx, input }) => {
+			const unkey = new Ratelimit({
+				rootKey: env.UNKEY_ROOT_KEY,
+				namespace: "steps.create",
+				limit: 3,
+				duration: "5s",
+			});
+			const { success } = await unkey.limit(ctx.session.user.id);
+			if (!success) {
+				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
+			}
 			const step = await ctx.db.insert(steps).values({
 				id: crypto.randomUUID(),
                 title: input.title,
@@ -36,7 +49,7 @@ export const stepsRouter = createTRPCRouter({
 				return res;	
 			})
 		}),
-		getStepByProjectId: protectedProcedure
+		getStepByProjectId: publicProcedure
 		.input(
 			z.object({
 				projectId: z.string().min(3),
