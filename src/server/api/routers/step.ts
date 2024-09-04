@@ -75,6 +75,7 @@ export const stepsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const stepList = await ctx.db.query.steps.findMany({
         where: eq(steps.projectId, input.projectId),
+        with: { project: true },
         orderBy: (steps, { desc }) => [desc(steps.stepNumber)],
       });
       if(!stepList) {

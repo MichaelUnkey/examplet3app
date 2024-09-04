@@ -102,6 +102,7 @@ export function StepForm({
 			projectId: values.projectId,
 			image: stepImage,
 		});
+		setStepNumber(stepNumber + 1);
 		router.refresh();
 		form.reset();
 		form.setValue("title", "");

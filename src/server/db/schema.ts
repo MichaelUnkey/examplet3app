@@ -8,7 +8,6 @@ import {
 } from "drizzle-orm/sqlite-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
-
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
  * database instance for multiple projects.
@@ -108,10 +107,6 @@ export const projects = createTable("project", {
 	projectDescription: text("projectDescription").notNull(),
 	category: text("category").notNull(),
 	projectImage: text("projectImage"),
-	steps: text("steps", { mode: "json" })
-		.notNull()
-		.$type<string[]>()
-		.default(sql`(json_array())`),
 	createdAt: int("created_at", { mode: "timestamp" })
 		.default(sql`(unixepoch())`)
 		.notNull(),
@@ -137,6 +132,9 @@ export const steps = createTable("step", {
 	),
 });
 
+export const projectRelations = relations(projects, ({ many }) => ({
+	steps: many(steps),
+}));
 export const stepRelations = relations(steps, ({ one }) => ({
 	project: one(projects, {
 		fields: [steps.projectId],

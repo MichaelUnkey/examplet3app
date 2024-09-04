@@ -64,7 +64,7 @@ export const projectRouter = createTRPCRouter({
 			where: eq(projects.created_by, ctx?.session?.user.id ?? ""),
 			orderBy: (projects, { desc }) => [desc(projects.createdAt)],
 		});
-	
+
 		return projectList;
 	}),
 	getProjectById: publicProcedure
@@ -76,10 +76,11 @@ export const projectRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			const project = await ctx.db.query.projects.findFirst({
 				where: eq(projects.id, input.projectId),
+				with: { steps: true },
 			});
 			if (!project) {
 				throw new TRPCError({
-          message: "No projects found",
+					message: "No projects found",
 					code: "NOT_FOUND",
 				});
 			}
@@ -168,13 +169,13 @@ export const projectRouter = createTRPCRouter({
 					updatedAt: new Date(Date.now()),
 				})
 				.where(eq(projects.id, input.projectId));
-        if (res.rowsAffected !== 1) {
-          return new TRPCError({
-            message: "Name not updated",
-            code: "BAD_REQUEST",
-          });
-        }
-			return res.rowsAffected === 1
+			if (res.rowsAffected !== 1) {
+				return new TRPCError({
+					message: "Name not updated",
+					code: "BAD_REQUEST",
+				});
+			}
+			return res.rowsAffected === 1;
 		}),
 	editProjectCategory: protectedProcedure
 		.input(
@@ -200,12 +201,12 @@ export const projectRouter = createTRPCRouter({
 					updatedAt: new Date(Date.now()),
 				})
 				.where(eq(projects.id, input.projectId));
-        if (res.rowsAffected !== 1) {
-          return new TRPCError({
-            message: "Category not updated",
-            code: "BAD_REQUEST",
-          });
-        }
+			if (res.rowsAffected !== 1) {
+				return new TRPCError({
+					message: "Category not updated",
+					code: "BAD_REQUEST",
+				});
+			}
 			return res.rowsAffected === 1;
 		}),
 	editProjectDescription: protectedProcedure
@@ -232,12 +233,12 @@ export const projectRouter = createTRPCRouter({
 					updatedAt: new Date(Date.now()),
 				})
 				.where(eq(projects.id, input.projectId));
-        if (res.rowsAffected !== 1) {
-          return new TRPCError({
-            message: "Description not updated",
-            code: "BAD_REQUEST",
-          });
-        }
+			if (res.rowsAffected !== 1) {
+				return new TRPCError({
+					message: "Description not updated",
+					code: "BAD_REQUEST",
+				});
+			}
 			return res.rowsAffected === 1;
 		}),
 });

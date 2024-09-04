@@ -157,10 +157,10 @@ export function EditStepImage({
 								<Button
 									type="submit"
 									size="sm"
-									className="px-3 shadow shadow-slate-600"
+									className="absolute bottom-6 right-8 px-3shadow shadow-slate-600 inline-block"
 								>
-									<span className="sr-only">Save</span>
-									<SaveIcon className="h-4 w-4" />
+									<span className="my-auto font-semibold text-base">Save</span>
+									<SaveIcon className="h-4 w-4 inline ml-2 my-auto mb-1" />
 								</Button>
 							</form>
 						</Form>

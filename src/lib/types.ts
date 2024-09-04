@@ -19,7 +19,6 @@ export const ProjectSchema = z.object({
     projectDescription: z.string(),
     category: z.string(),
     projectImage: z.string().optional(),
-    steps: z.array(z.string()),
     createdAt: z.number().positive(),
     updatedAt: z.number().positive().optional(),
 });

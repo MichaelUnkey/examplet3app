@@ -1,5 +1,5 @@
+
 import { api, HydrateClient } from "~/trpc/server";
-import { getServerAuthSession } from "~/server/auth";
 import Image from "next/image";
 import { TRPCError } from "@trpc/server";
 import PageTitle from "~/app/components/pageTitle";
@@ -11,6 +11,7 @@ import { EditDescription } from "~/app/components/editDescription";
 import { EditStep } from "~/app/components/editStep";
 import { EditStepImage } from "~/app/components/editStepImage";
 import { StepForm } from "~/app/components/stepForm";
+import { useMemo, useState } from "react";
 
 export default async function Page({
 	params,
@@ -19,11 +20,13 @@ export default async function Page({
 		projectId: params.projectId,
 	});
 	const project = res instanceof TRPCError ? null : res;
-
-	const stepList = await api.step.getStepByProjectId({
-		projectId: project ? project.id : "",
-	});
-	console.log(stepList.length);
+	const steps = project?.steps;
+	// const [steps, setSteps] = useState(project?.steps);
+	// useMemo(() => {
+	// 	if (project?.steps) {
+	// 		setSteps(project.steps);
+	// 	}
+	// }, [project]);
 	
 	return (
 		<HydrateClient>
@@ -87,7 +90,7 @@ export default async function Page({
 					</div>
 					<div className="flex flex-col mt-4 bg-slate-100 rounded-lg pt-8">
 						<div className="relaltive">
-							{stepList.map((step) => {
+							{steps ? steps?.map((step) => {
 								return (
 									<div key={step.id} className="relative mt-2 pl-6 gap-1">
 										<p className="font-semibold text-nowrap text-xl">
@@ -119,10 +122,10 @@ export default async function Page({
 										</div>
 									</div>
 								);
-							})}
+							}) : null}
 						</div>
 						<div className="max-w-96 bg-white mx-auto rounded-xl">
-							<StepForm project={{projectId: project?.id ?? "", stepCount: stepList.length}} />
+							<StepForm project={{projectId: project?.id ?? "", stepCount: steps?.length ?? 0}} />
 						</div>
 					</div>
 				</div>
