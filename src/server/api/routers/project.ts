@@ -8,11 +8,8 @@ import {
 import { projects } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { UnkeyRatelimit } from "~/server/ratelimit";
-import { Ratelimit } from "@unkey/ratelimit";
-import { env } from "~/env";
- 
+
 export const projectRouter = createTRPCRouter({
-	//Todo handle steps in next form
 	create: protectedProcedure
 		.input(
 			z.object({
@@ -21,20 +18,17 @@ export const projectRouter = createTRPCRouter({
 				category: z.string(),
 				projectImage: z.string().optional(),
 			}),
-		) //Handle some kind of return or error if needed
+		)
 		.mutation(async ({ ctx, input }) => {
-			// const unkey =  new Ratelimit({
-			// 	rootKey: env.UNKEY_ROOT_KEY,
-			// 	namespace: "project.create",
-			// 	limit: 1,
-			// 	duration: "100000000s",
-			//   });
-			//   const { success } = await unkey.limit(ctx.session.user.id);
-			//   console.log(success);
-			  
-			//   if (!success) {
-			// 	  return new Error("TOO_MANY_REQUESTS");
-			//   }
+			const unkey = UnkeyRatelimit({
+				namespace: "project.create",
+				limit: 3,
+				duration: 5,
+				userId: ctx.session.user.id,
+			});
+			if (!unkey) {
+				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
+			}
 			const project = await ctx.db
 				.insert(projects)
 				.values({
@@ -49,25 +43,26 @@ export const projectRouter = createTRPCRouter({
 					projectImage: input.projectImage ?? undefined,
 					createdAt: new Date(Date.now()),
 				})
-				.returning({ insertedId: projects.id });
-			return project[0];
+				.returning({ projectId: projects.id });
+				return { projectId: project[0]?.projectId ?? "" };
 		}),
-	getUserProjects: protectedProcedure.query(async ({ ctx }) => {
-		const unkey = UnkeyRatelimit({
-			namespace: "project.get.userProjects",
-			limit: 3,
-			duration: 5,
-			userId: ctx.session.user.id,
-		});
-		if (!unkey) {
-			return new TRPCError({ code: "TOO_MANY_REQUESTS" });
-		}
-		const projectList = await ctx.db.query.projects.findMany({
-			where: eq(projects.created_by, ctx?.session?.user.id ?? ""),
-			orderBy: (projects, { desc }) => [desc(projects.createdAt)],
-		});
-		return projectList ?? new TRPCError({ code: "NOT_FOUND" });
-	}),
+	getUserProjects: protectedProcedure
+		.query(async ({ ctx }) => {
+			const unkey = UnkeyRatelimit({
+				namespace: "project.get.userProjects",
+				limit: 3,
+				duration: 5,
+				userId: ctx.session.user.id,
+			});
+			if (!unkey) {
+				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
+			}
+			const projectList = await ctx.db.query.projects.findMany({
+				where: eq(projects.created_by, ctx?.session?.user.id ?? ""),
+				orderBy: (projects, { desc }) => [desc(projects.createdAt)],
+			})	
+			return projectList ?? new TRPCError({ code: "NOT_FOUND" });
+		}),
 	getProjectById: publicProcedure
 		.input(
 			z.object({
@@ -75,7 +70,6 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			
 			const project = await ctx.db.query.projects.findFirst({
 				where: eq(projects.id, input.projectId),
 			});
@@ -133,7 +127,6 @@ export const projectRouter = createTRPCRouter({
 				})
 				.where(eq(projects.id, input.projectId));
 			return res;
-
 		}),
 	editProjectImage: protectedProcedure
 		.input(
@@ -171,7 +164,6 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-		
 			const unkey = UnkeyRatelimit({
 				namespace: "project.edit.projectCategory",
 				limit: 1,
