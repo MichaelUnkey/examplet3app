@@ -58,9 +58,6 @@ export function EditStep({
 		},
 	});
 	const editStep = api.step.editStep.useMutation({
-		onMutate: () => {
-			console.log("mutating");
-		},
 		onSuccess: () => {
 			toast("Your step has been edited successfully.");
 			form.reset();

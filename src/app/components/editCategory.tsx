@@ -56,9 +56,6 @@ export function EditCategory({
 		},
 	});
 	const changeCategory = api.project.editProjectCategory.useMutation({
-		onMutate: () => {
-			console.log("mutating");
-		},
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
 			form.reset();

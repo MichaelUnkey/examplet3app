@@ -58,7 +58,6 @@ export function ProjectForm(): React.JSX.Element {
 
   const createProject = api.project.create.useMutation({
     onSuccess: (data) => {
-      console.log(data.projectId);
       toast("Your project has been created successfully.");
       router.push(`/projects/edit/${data.projectId}`);
       form.reset();
@@ -95,7 +94,6 @@ export function ProjectForm(): React.JSX.Element {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Description", values.projectDescription);
     await createProject.mutateAsync({
       projectName: values.projectName,
       category: values.category,

@@ -52,9 +52,6 @@ export function EditDescription({
 		},
 	});
 	const changeDescription = api.project.editProjectDescription.useMutation({
-		onMutate: () => {
-			console.log("mutating");
-		},
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
 			form.reset();

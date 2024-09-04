@@ -58,9 +58,6 @@ export function EditStepImage({
 		},
 	});
 	const editStepImage = api.step.editStepImage.useMutation({
-		onMutate: () => {
-			console.log("mutating");
-		},
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
 			form.reset();

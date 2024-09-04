@@ -47,9 +47,6 @@ export function StepForm({
 	const [stepNumber, setStepNumber] = useState<number>(project.stepCount + 1);
 	const router = useRouter();
 	const createStep = api.step.create.useMutation({
-		onMutate: () => {
-			console.log("mutating");
-		},
 		onSuccess: () => {
 			toast("Your step has been created successfully.");
 			form.reset();

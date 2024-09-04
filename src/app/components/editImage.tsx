@@ -58,9 +58,6 @@ export function EditImage({
 		},
 	});
 	const changeImage = api.project.editProjectImage.useMutation({
-		onMutate: () => {
-			console.log("mutating");
-		},
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
 			form.reset();
