@@ -17,9 +17,7 @@ import { Textarea } from "./ui/textarea";
 import { toast } from "./ui/toaster";
 import { api } from "~/trpc/react";
 import { useState } from "react";
-import type { ProjectSchema } from "~/lib/types";
-import { revalidatePath } from "next/cache";
-
+import { useRouter } from "next/navigation";
 
 const ACCEPTED_IMAGE_TYPES = ["image/*,.jpeg", "image/*,.jpg", "image/*,.png"];
 const formSchema = z.object({
@@ -38,15 +36,16 @@ const formSchema = z.object({
 		)
 		.optional(),
 });
-
-// Import the ProjectSchema type from the appropriate module
-
+type ProjectType = {
+	projectId: string;
+	stepCount: number;
+}
 export function StepForm({
 	project,
-}: { project: ProjectSchema }): React.JSX.Element {
+}: { project: ProjectType }): React.JSX.Element {
 	const [stepImage, setStepImage] = useState<string>();
-	const [stepNumber, setStepNumber] = useState<number>(project?.steps?.length);
-
+	const [stepNumber, setStepNumber] = useState<number>(project.stepCount + 1);
+	const router = useRouter();
 	const createStep = api.step.create.useMutation({
 		onMutate: () => {
 			console.log("mutating");
@@ -59,14 +58,16 @@ export function StepForm({
 			toast(`Step Creation Failed ${error.message}`);
 		},
 	});
-
+	if(project.projectId === undefined) {
+		return <div>Project ID is undefined</div>
+	}
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: "",
 			description: "",
-			stepNumber: project.steps.length + 1,
-			projectId: project.id,
+			stepNumber: stepNumber,
+			projectId: project.projectId,
 			image: undefined,
 		},
 	});
@@ -94,19 +95,17 @@ export function StepForm({
 	}
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log("Before Mutation");
 		await createStep.mutateAsync({
 			title: values.title,
 			description: values.description,
-			stepNumber: project.steps.length + 1,
+			stepNumber: values.stepNumber,
 			projectId: values.projectId,
 			image: stepImage,
 		});
-		revalidatePath(`/project/${project.id}`);
+		router.refresh();
 		form.reset();
 		form.setValue("title", "");
 		form.setValue("description", "");
-		console.log("After Mutation");
 	}
 	return (
 		<div className="mx-auto flex flex-col mt-12 w-full px-6 text-center">
@@ -118,7 +117,6 @@ export function StepForm({
 						control={form.control}
 						name="title"
 						render={({ field }) => (
-							// <div className="flex flex-col gap-4">
 							<FormItem>
 								<FormLabel>Title</FormLabel>
 								<FormControl>

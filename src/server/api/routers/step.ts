@@ -13,7 +13,6 @@ import { projects } from "~/server/db/schema";
 import { UnkeyRatelimit } from "~/server/ratelimit";
 
 export const stepsRouter = createTRPCRouter({
-  //Todo handle steps in next form
   create: protectedProcedure
     .input(
       z.object({
@@ -23,7 +22,7 @@ export const stepsRouter = createTRPCRouter({
         stepNumber: z.number(),
         image: z.string().optional(),
       }),
-    ) //Handle some kind of return or error if needed
+    )
     .mutation(async ({ ctx, input }) => {
       const unkey = await UnkeyRatelimit({
         namespace: "steps.create",
@@ -31,6 +30,7 @@ export const stepsRouter = createTRPCRouter({
         duration: 5,
         userId: ctx.session.user.id,
       });
+      
       if (!unkey) {
         return new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
@@ -44,20 +44,27 @@ export const stepsRouter = createTRPCRouter({
           stepImage: input.image ?? undefined,
           stepNumber: input.stepNumber,
           createdAt: new Date(Date.now()),
+          updatedAt: new Date(Date.now()),
         })
         .returning({ insertedId: steps.id })
-        .then(async (res) => {
-          if (res[0]?.insertedId) {
-            const project = await ctx.db
-              .update(projects)
-              .set({
-                steps: sql`(json_array_append(steps, ${res[0].insertedId}))`,
-              })
-              .where(eq(projects.id, input.projectId))
-              .returning({ steps: projects.steps });
+        // .then(async (res) => {
+        //   if (res[0]?.insertedId) {
+        //     const project = await ctx.db
+        //       .update(projects)
+        //       .set({
+        //         steps: sql`(json_array_append(steps, ${res[0].insertedId}))`,
+        //       })
+        //       .where(eq(projects.id, input.projectId))
+        //       .returning({ steps: projects.steps });
+        //   }
+          if (!step) {
+            throw new TRPCError({
+              message: "Error inserting into DB",
+              code: "BAD_REQUEST",
+            });
           }
-          return res;
-        });
+          return step;
+    
     }),
   getStepByProjectId: publicProcedure
     .input(
@@ -70,7 +77,11 @@ export const stepsRouter = createTRPCRouter({
         where: eq(steps.projectId, input.projectId),
         orderBy: (steps, { desc }) => [desc(steps.stepNumber)],
       });
-      return stepList ?? new TRPCError({ code: "NOT_FOUND" });
+      if(!stepList) {
+        throw new TRPCError({ message: "Error fetching steps",
+          code: "NOT_FOUND" });
+      }
+      return stepList;
     }),
   editStep: protectedProcedure
     .input(
@@ -98,9 +109,11 @@ export const stepsRouter = createTRPCRouter({
           updatedAt: new Date(Date.now()),
         })
         .where(eq(steps.id, input.stepId));
-      return res.rowsAffected === 1
-        ? true
-        : new TRPCError({ code: "NOT_FOUND" });
+        if(!res.rowsAffected) {
+          throw new TRPCError({ message: "Error editing step",
+            code: "BAD_REQUEST" });
+        }
+      return res.rowsAffected === 1;
     }),
   editStepImage: protectedProcedure
     .input(
@@ -126,8 +139,10 @@ export const stepsRouter = createTRPCRouter({
           updatedAt: new Date(Date.now()),
         })
         .where(eq(steps.id, input.stepId));
-      return res.rowsAffected === 1
-        ? true
-        : new TRPCError({ code: "NOT_FOUND" });
+        if(!res.rowsAffected) {
+          throw new TRPCError({ message: "Error editing step image",
+            code: "BAD_REQUEST" });
+        }
+      return res.rowsAffected === 1;
     }),
 });

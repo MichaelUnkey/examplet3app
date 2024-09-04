@@ -10,6 +10,7 @@ import { EditCategory } from "~/app/components/editCategory";
 import { EditDescription } from "~/app/components/editDescription";
 import { EditStep } from "~/app/components/editStep";
 import { EditStepImage } from "~/app/components/editStepImage";
+import { StepForm } from "~/app/components/stepForm";
 
 export default async function Page({
 	params,
@@ -22,7 +23,8 @@ export default async function Page({
 	const stepList = await api.step.getStepByProjectId({
 		projectId: project ? project.id : "",
 	});
-
+	console.log(stepList.length);
+	
 	return (
 		<HydrateClient>
 			<div className="flex flex-col w-full h-full bg-gray-200/20">
@@ -112,13 +114,15 @@ export default async function Page({
 											</div>
 										) : null}
 
-										
 										<div className="mx-8 mt-4">
 											<Separator />
 										</div>
 									</div>
 								);
 							})}
+						</div>
+						<div className="max-w-96 bg-white mx-auto rounded-xl">
+							<StepForm project={{projectId: project?.id ?? "", stepCount: stepList.length}} />
 						</div>
 					</div>
 				</div>

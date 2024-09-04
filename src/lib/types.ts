@@ -11,21 +11,18 @@ export const StepSchema = z.object({
     updatedAt: z.number().optional(),
 });
 
-export const ProjectSchema = {
+export const ProjectSchema = z.object({
     id: z.string(),
     projectName: z.string(),
     created_by: z.string(),
     created_byName: z.string(),
-    likes: z.number().optional(),
-    makes: z.number().optional(),
     projectDescription: z.string(),
     category: z.string(),
     projectImage: z.string().optional(),
-    steps: z.array(StepSchema),
+    steps: z.array(z.string()),
     createdAt: z.number().positive(),
     updatedAt: z.number().positive().optional(),
-};
-
+});
 
 
 export const UserSchema = z.object({

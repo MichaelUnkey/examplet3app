@@ -105,8 +105,6 @@ export const projects = createTable("project", {
 		.notNull()
 		.references(() => users.id),
 	created_byName: text("created_byName", { length: 255 }),
-	likes: int("likes", { mode: "number" }).default(0),
-	makes: int("makes", { mode: "number" }).default(0),
 	projectDescription: text("projectDescription").notNull(),
 	category: text("category").notNull(),
 	projectImage: text("projectImage"),
@@ -129,7 +127,7 @@ export const steps = createTable("step", {
 	projectId: text("projectId", { length: 255 })
 		.notNull()
 		.references(() => projects.id),
-	description: text("description", { length: 255 }).notNull(),
+	description: text("description").notNull(),
 	stepImage: text("stepImage"),
 	createdAt: int("created_at", { mode: "timestamp" })
 		.default(sql`(unixepoch())`)

@@ -15,8 +15,6 @@ type ProjectCardProps = {
 	created_byName: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
-	likes: number | null;
-	makes: number | null;
 	steps: string[];
 };
 
@@ -48,16 +46,7 @@ export async function ProjectCard({
 						<div className="absolute bottom-3 overflow-hidden">
 							<p className="inline text-left w-full">{project.created_byName} </p>
 						</div>
-						<div className="absolute right-4 bottom-3 space-x-1">
-							<div className="inline-block rounded-full shadow px-2 shadow-red-900/30">
-								<Rocket size={16} className="inline-block text-red-500" />
-								<p className="inline-block ml-1">{project.likes}</p>
-							</div>
-							<div className="inline-block rounded-full shadow px-2 shadow-sky-600/30">
-								<Hammer size={16} className="inline-block text-sky-500" />
-								<p className="inline-block ml-1">{project.makes}</p>
-							</div>
-						</div>
+						
 					</div>
 				</CardContent>
 			</Card>
