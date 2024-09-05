@@ -1,33 +1,52 @@
-import { z } from 'zod';
+export type ProjectCardSchema = {
+	projectName: string | null;
+	category: string;
+	projectDescription: string;
+	projectImage: string | null;
+	id: string;
+	created_by: string;
+	created_byName: string | null;
+	createdAt: Date;
+	updatedAt: Date | null;
+	steps: {
+		id: string;
+		createdAt: Date;
+		updatedAt: Date | null;
+		description: string;
+		title: string;
+		stepNumber: number;
+		projectId: string;
+		stepImage: string | null;
+	}[];
+};
+export type StepSchema ={
+    id: string;
+		createdAt: Date;
+		updatedAt: Date | null;
+		description: string;
+		title: string;
+		stepNumber: number;
+		projectId: string;
+		stepImage: string | null;
+};
 
-export const StepSchema = z.object({
-    id: z.string(),
-    title: z.string().min(3),
-    stepNumber: z.number(),
-    projectId: z.string(),
-    description: z.string(),
-    stepImage: z.string().optional(),
-    createdAt: z.number(),
-    updatedAt: z.number().optional(),
-});
-
-export const ProjectSchema = z.object({
-    id: z.string(),
-    projectName: z.string(),
-    created_by: z.string(),
-    created_byName: z.string(),
-    projectDescription: z.string(),
-    category: z.string(),
-    projectImage: z.string().optional(),
-    createdAt: z.number().positive(),
-    updatedAt: z.number().positive().optional(),
-});
+export type ProjectSchema ={
+    projectName: string | null;
+	category: string;
+	projectDescription: string;
+	projectImage: string | null;
+	id: string;
+	created_by: string;
+	created_byName: string | null;
+	createdAt: Date;
+	updatedAt: Date | null;
+};
 
 
-export const UserSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    email: z.string(),
-    emailVerified: z.number(),
-    image: z.string().optional(),
-});
+export type UserSchema = {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: number;
+    image: string | null;
+};

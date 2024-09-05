@@ -12,7 +12,7 @@ import {
 	FormMessage,
 } from "~/app/components/ui/form";
 import { Input } from "~/app/components/ui/input";
-import { set, z } from "zod";
+import { z } from "zod";
 import { api } from "~/trpc/react";
 import { useState } from "react";
 import { toast } from "./ui/toaster";
@@ -44,11 +44,9 @@ const formSchema = z.object({
 export function EditStepImage({
 	stepId,
 }: { stepId: string }): React.JSX.Element {
-    const [open, setOpen] = useState(false);
-    const router = useRouter();
-	if (stepId === "") {
-		return <div>Project not found</div>;
-	}
+	const [open, setOpen] = useState(false);
+	const router = useRouter();
+
 	const [image, setImage] = useState<string>();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -57,6 +55,9 @@ export function EditStepImage({
 			image: undefined,
 		},
 	});
+	if (stepId === "") {
+		return <div>Project not found</div>;
+	}
 	const editStepImage = api.step.editStepImage.useMutation({
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
@@ -101,10 +102,8 @@ export function EditStepImage({
 			toast("Failed to change project image.");
 			return;
 		}
-        router.refresh();
-        setOpen(false);
-        
-        
+		router.refresh();
+		setOpen(false);
 	}
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -137,6 +136,7 @@ export function EditStepImage({
 										<FormItem>
 											<FormControl>
 												<Input
+													id="image"
 													className="shadow-inner shadow-slate-200 bg-slate-300/30"
 													multiple={false}
 													onChange={(e) =>

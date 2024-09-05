@@ -9,7 +9,7 @@ export default async function Page() {
 	const session = await getServerAuthSession();
 	return (
 		<HydrateClient>
-			<div className="flex flex-col w-full bg-gray-200/20">
+			<div className="flex flex-col w-full bg-[url('/images/SL-031520-28970-33.jpg')]">
 				
 					<PageTitle title="Projects" />
 			
@@ -29,7 +29,6 @@ export default async function Page() {
 							<ProjectCard
 								key={project.id.substring(0, 8)}
 								project={project}
-								
 							/>
 						))}
 					</div>

@@ -19,9 +19,9 @@ export default function RootLayout({
 	return (
 		<html lang="en" className={`${GeistSans.variable}`}>
 			<TRPCReactProvider>
-				<body className="max-w-[2160px] mx-auto bg-gradient-to-b h-screen">
+				<body className="max-w-[2160px] mx-auto h-screen ">
 					<Header />
-					<div className="w-full flex flex-row bg-slate-200">
+					<div className="w-full flex flex-row bg-slate-200 h-full">
 						<Categories />
 						{children} <Toaster />
 					</div>

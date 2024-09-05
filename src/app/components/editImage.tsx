@@ -44,11 +44,9 @@ const formSchema = z.object({
 export function EditImage({
 	projectId,
 }: { projectId: string }): React.JSX.Element {
-    const [open, setOpen] = useState(false);
-    const router = useRouter();
-	if (projectId === "") {
-		return <div>Project not found</div>;
-	}
+	const [open, setOpen] = useState(false);
+	const router = useRouter();
+
 	const [image, setImage] = useState<string>();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -57,6 +55,9 @@ export function EditImage({
 			image: undefined,
 		},
 	});
+	if (projectId === "") {
+		return <div>Project not found</div>;
+	}
 	const changeImage = api.project.editProjectImage.useMutation({
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
@@ -101,10 +102,8 @@ export function EditImage({
 			toast("Failed to change project image.");
 			return;
 		}
-        router.refresh();
-        setOpen(false);
-        
-        
+		router.refresh();
+		setOpen(false);
 	}
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -137,6 +136,7 @@ export function EditImage({
 										<FormItem>
 											<FormControl>
 												<Input
+													id="image"
 													className="shadow-inner shadow-slate-200 bg-slate-300/30"
 													multiple={false}
 													onChange={(e) =>

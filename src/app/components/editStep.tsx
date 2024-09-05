@@ -46,9 +46,7 @@ export function EditStep({
 }): React.JSX.Element {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
-	if (stepId === "") {
-		return <div>Step not found</div>;
-	}
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -57,6 +55,9 @@ export function EditStep({
 			stepDescription: stepDescription,
 		},
 	});
+	if (stepId === "") {
+		return <div>Step not found</div>;
+	}
 	const editStep = api.step.editStep.useMutation({
 		onSuccess: () => {
 			toast("Your step has been edited successfully.");
@@ -90,10 +91,10 @@ export function EditStep({
 					<Edit2Icon className="" size={14} />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-md bg-white">
+			<DialogContent className="sm:max-w-md bg-white" aria-describedby={"Add step form"}>
 				<DialogHeader>
-					<DialogTitle>Edit step title</DialogTitle>
-					<DialogDescription>Please choose a new title.</DialogDescription>
+					<DialogTitle>Edit step</DialogTitle>
+					<DialogDescription>Make any changes you see fit</DialogDescription>
 				</DialogHeader>
 				<div className="flex items-center space-x-2">
 					<div className="grid flex-1 gap-2">
@@ -109,9 +110,10 @@ export function EditStep({
 									name="stepTitle"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Title</FormLabel>
+											<FormLabel htmlFor="title">Title</FormLabel>
 											<FormControl>
 												<Input
+													id="title"
 													{...field}
 													className="shadow-inner shadow-slate-200 bg-slate-300/30"
 												/>
@@ -125,9 +127,10 @@ export function EditStep({
 									name="stepDescription"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Description</FormLabel>
+											<FormLabel htmlFor="description">Description</FormLabel>
 											<FormControl>
 												<Textarea
+												id="description"
 													placeholder="Project Description"
 													{...field}
 													className="shadow-inner shadow-slate-200 bg-slate-300/30"

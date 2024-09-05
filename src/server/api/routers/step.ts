@@ -1,15 +1,12 @@
 import { TRPCError } from "@trpc/server";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { env } from "~/env";
-import { Ratelimit } from "@unkey/ratelimit";
 import { steps } from "~/server/db/schema";
-import { projects } from "~/server/db/schema";
 import { UnkeyRatelimit } from "~/server/ratelimit";
 
 export const stepsRouter = createTRPCRouter({
@@ -24,14 +21,14 @@ export const stepsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const unkey = await UnkeyRatelimit({
+      const success = await UnkeyRatelimit({
         namespace: "steps.create",
         limit: 3,
         duration: 5,
         userId: ctx.session.user.id,
       });
       
-      if (!unkey) {
+      if (!success) {
         return new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
       const step = await ctx.db
@@ -93,13 +90,13 @@ export const stepsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const unkey = await UnkeyRatelimit({
+      const success = await UnkeyRatelimit({
         namespace: "steps.edit",
         limit: 3,
         duration: 5,
         userId: ctx.session.user.id,
       });
-      if (!unkey) {
+      if (!success) {
         return new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
       const res = await ctx.db
@@ -124,13 +121,13 @@ export const stepsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const unkey = await UnkeyRatelimit({
+      const success = await UnkeyRatelimit({
         namespace: "steps.edit.image",
         limit: 3,
         duration: 5,
         userId: ctx.session.user.id,
       });
-      if (!unkey) {
+      if (!success) {
         return new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
       const res = await ctx.db

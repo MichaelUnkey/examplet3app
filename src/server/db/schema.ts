@@ -117,7 +117,7 @@ export const projects = createTable("project", {
 
 export const steps = createTable("step", {
 	id: text("id", { length: 255 }).notNull().primaryKey(),
-	title: text("name", { length: 255 }),
+	title: text("name", { length: 255 }).notNull(),
 	stepNumber: int("stepNumber", { mode: "number" }).notNull(),
 	projectId: text("projectId", { length: 255 })
 		.notNull()

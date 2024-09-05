@@ -20,16 +20,16 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const unkey = await UnkeyRatelimit({
+			const success = await UnkeyRatelimit({
 				namespace: "project.create",
 				limit: 3,
 				duration: 5,
 				userId: ctx.session.user.id,
 			});
-			if (!unkey) {
+			if (!success) {
 				throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 			}
-			const project = await ctx.db
+			const [project] = await ctx.db
 				.insert(projects)
 				.values({
 					id: crypto.randomUUID(),
@@ -42,27 +42,28 @@ export const projectRouter = createTRPCRouter({
 					createdAt: new Date(Date.now()),
 				})
 				.returning({ projectId: projects.id });
-			if (!project[0]?.projectId) {
+			if (!project?.projectId) {
 				throw new TRPCError({
 					message: "Error inserting into DB",
 					code: "BAD_REQUEST",
 				});
 			}
-			return { projectId: project[0].projectId };
+			return { projectId: !project?.projectId };
 		}),
 	getUserProjects: protectedProcedure.query(async ({ ctx }) => {
-		const unkey = await UnkeyRatelimit({
+		const success = await UnkeyRatelimit({
 			namespace: "project.get.userProjects",
 			limit: 3,
 			duration: 5,
 			userId: ctx.session.user.id,
 		});
-		if (!unkey) {
+		if (!success) {
 			throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 		}
 		const projectList = await ctx.db.query.projects.findMany({
 			where: eq(projects.created_by, ctx?.session?.user.id ?? ""),
 			orderBy: (projects, { desc }) => [desc(projects.createdAt)],
+			with: { steps: true },
 		});
 
 		return projectList;
@@ -96,6 +97,7 @@ export const projectRouter = createTRPCRouter({
 			const project = await ctx.db.query.projects.findMany({
 				orderBy: (projects, { desc }) => [desc(projects.createdAt)],
 				limit: input.limit ?? 10,
+				with: { steps: true },
 			});
 			return project;
 		}),
@@ -110,6 +112,7 @@ export const projectRouter = createTRPCRouter({
 				where: eq(projects.category, input.category.toUpperCase()),
 				orderBy: (projects, { desc }) => [desc(projects.createdAt)],
 				limit: 50,
+				with: { steps: true },
 			});
 			return project;
 		}),
@@ -121,13 +124,13 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const unkey = await UnkeyRatelimit({
+			const success = await UnkeyRatelimit({
 				namespace: "project.edit.projectName",
 				limit: 3,
 				duration: 5,
 				userId: ctx.session.user.id,
 			});
-			if (!unkey) {
+			if (!success) {
 				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
 			}
 			const res = await ctx.db
@@ -153,13 +156,13 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const unkey = await UnkeyRatelimit({
+			const success = await UnkeyRatelimit({
 				namespace: "project.edit.projectImage",
 				limit: 3,
 				duration: 5,
 				userId: ctx.session.user.id,
 			});
-			if (!unkey) {
+			if (!success) {
 				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
 			}
 			const res = await ctx.db
@@ -185,13 +188,13 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const unkey = await UnkeyRatelimit({
+			const success = await UnkeyRatelimit({
 				namespace: "project.edit.projectCategory",
 				limit: 1,
 				duration: 1000000000,
 				userId: ctx.session.user.id,
 			});
-			if (!unkey) {
+			if (!success) {
 				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
 			}
 			const res = await ctx.db
@@ -217,13 +220,13 @@ export const projectRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const unkey = await UnkeyRatelimit({
+			const success = await UnkeyRatelimit({
 				namespace: "project.edit.projectDescription",
 				limit: 3,
 				duration: 5,
 				userId: ctx.session.user.id,
 			});
-			if (!unkey) {
+			if (!success) {
 				return new TRPCError({ code: "TOO_MANY_REQUESTS" });
 			}
 			const res = await ctx.db

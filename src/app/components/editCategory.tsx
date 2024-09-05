@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "~/app/components/ui/button";
+import { Bot } from "lucide-react";
 import {
 	Form,
 	FormControl,
@@ -45,9 +46,7 @@ export function EditCategory({
 }: { projectId: string }): React.JSX.Element {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
-	if (projectId === "") {
-		return <div>Project not found</div>;
-	}
+	
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -55,6 +54,9 @@ export function EditCategory({
 			category: undefined,
 		},
 	});
+	if (projectId === "") {
+		return <div>Project not found</div>;
+	}
 	const changeCategory = api.project.editProjectCategory.useMutation({
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");
@@ -100,7 +102,6 @@ export function EditCategory({
 								className="space-y-4"
 							>
 								<hr className="border border-white/10" />
-								{/* Project Name */}
 								<FormField
 									control={form.control}
 									name="category"
@@ -108,12 +109,13 @@ export function EditCategory({
 										<FormItem>
 											<FormLabel>Category</FormLabel>
 											<Select
+												
 												onValueChange={field.onChange}
 												defaultValue={field.value}
 											>
 												<FormControl>
 													<SelectTrigger className="shadow-inner shadow-slate-200 bg-slate-300/30">
-														<SelectValue placeholder="Select a category " />
+														<SelectValue placeholder="Select a category"/>
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent className="shadow-inner shadow-slate-200 bg-slate-200">

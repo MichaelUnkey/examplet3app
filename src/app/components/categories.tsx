@@ -10,7 +10,6 @@ import {
 	Hammer,
 	TreeDeciduous,
 	Cog,
-	Cuboid,
 } from "lucide-react";
 export function Categories() {
 	const path = usePathname();
@@ -20,7 +19,6 @@ export function Categories() {
 				<div className="flex flex-row gap-4 py-4 shadow-inner-lg shadow-slate-700 items-start justify-center rounded-lg">
 					<h3 className="inline-block my-auto text-lg font-semibold">Categories</h3>
 				</div>
-
 				<ul className="space-y-4 mt-6">
 					<li className={`flex flex-row gap-4 pl-4 py-2 ${path === '/art' ? 'rounded-lg shadow shadow-slate-700 bg-gradient-to-tl from-slate-50 to-slate-200' : null}`}>
 						<Brush size="16" className="mt-1" />

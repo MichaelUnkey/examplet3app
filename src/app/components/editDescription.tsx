@@ -41,9 +41,7 @@ export function EditDescription({
 }: { projectId: string; description: string }): React.JSX.Element {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
-	if (projectId === "") {
-		return <div>Project not found</div>;
-	}
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -51,6 +49,9 @@ export function EditDescription({
 			description: description,
 		},
 	});
+	if (projectId === "") {
+		return <div>Project not found</div>;
+	}
 	const changeDescription = api.project.editProjectDescription.useMutation({
 		onSuccess: () => {
 			toast("Your image has been changed successfully.");

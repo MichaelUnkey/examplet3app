@@ -34,12 +34,11 @@ const formSchema = z.object({
 });
 
 type Props = {
-	projectId: string,
-	name: string,
-	
+	projectId: string;
+	name: string;
 };
 
-export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
+export const UpdateProjectName: React.FC<Props> = ({ projectId, name }) => {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -72,8 +71,8 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 			toast("Failed to change project image.");
 			return;
 		}
-        router.refresh();
-        setOpen(false);
+		router.refresh();
+		setOpen(false);
 	}
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -98,17 +97,17 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 								className="space-y-4"
 							>
 								<FormField
-										control={form.control}
-										name="projectName"
-										render={({ field }) => (
-											<FormItem>
-												<FormControl>
-													<Input {...field} type="text" />
-												</FormControl>
-												<FormMessage className="mt-4 text-red-600" />
-											</FormItem>
-										)}
-									/>
+									control={form.control}
+									name="projectName"
+									render={({ field }) => (
+										<FormItem>
+											<FormControl>
+												<Input id="projectName" {...field} type="text" />
+											</FormControl>
+											<FormMessage className="mt-4 text-red-600" />
+										</FormItem>
+									)}
+								/>
 								<Button
 									type="submit"
 									size="sm"
@@ -134,7 +133,5 @@ export const UpdateProjectName: React.FC<Props> = ({projectId, name}) => {
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
-					
-							
 	);
 };

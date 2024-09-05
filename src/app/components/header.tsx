@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { getServerAuthSession } from "~/server/auth";
 import { HeaderNav } from "./headerNav";
-// import { usePathname } from "next/navigation";
 
 export async function Header() {
 	const session = await getServerAuthSession();
@@ -14,11 +13,7 @@ export async function Header() {
 			</div>
 			<HeaderNav loggedIn={isAuthed} />
 			<div className="flex flex-row justify-end my-auto mr-4">
-				<input
-					type="text"
-					placeholder="Search"
-					className="border border-black rounded-full p-1 h-8 w-48 my-auto"
-				/>
+				<div className="my-auto">{session?.user.name}</div>
 				<div className="my-auto ml-4">
 					{session?.user ? (
 						<Avatar className="my-auto h-8 w-8">
@@ -33,8 +28,6 @@ export async function Header() {
 					) : (
 						<p>Guest</p>
 					)}
-
-					{/* Needs auth and userMenu component */}
 				</div>
 			</div>
 		</div>

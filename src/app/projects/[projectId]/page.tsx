@@ -18,13 +18,13 @@ export default async function Page({
 
 	return (
 		<HydrateClient>
-			<div className="flex flex-col w-full h-full bg-gray-200/20">
+			<div className="flex flex-col w-full h-full bg-[url('/images/SL-031520-28970-33.jpg')]">
 				<div className="flex flex-row w-full">
 					<PageTitle title={project?.projectName ?? ""} />
 				</div>
-				<div className="w-full flex flex-col px-4 mt-2">
-					<div className="flex flex-row max-h-96 items-start [&>*]:text-slate-900 justify-center pt-4 pb-8 bg-white w-full p-4 mx-auto rounded-lg ">
-						<div className="flex flex-col shrink w-1/2">
+				<div className="w-full flex flex-col px-4 mt-2 ">
+					<div className="flex flex-row max-h-96 items-start [&>*]:text-slate-900 justify-center pt-4 pb-8 bg-white w-full p-4 mx-auto rounded-lg shadow-lg shadow-slate-800 border border-slate-400 ">
+						<div className="flex flex-col shrink w-1/2 ">
 							<div className="relative">
 								<Image
 									className="aspect-w-16 aspect-h-9 "
@@ -55,7 +55,7 @@ export default async function Page({
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col mt-4 bg-white rounded-lg pt-8">
+					<div className="flex flex-col mt-4 bg-white rounded-lg pt-8 shadow-lg shadow-slate-800 border border-slate-400">
 						{stepList.map((step) => {
 							return (
 								<div key={step.id} className="flex flex-col mt-2 pl-6 gap-1">

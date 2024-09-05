@@ -10,13 +10,13 @@ export const userRouter = createTRPCRouter({
   getUser: protectedProcedure
     .input(z.object({ created_by: z.string() }))
     .query(async ({ ctx, input }) => {
-      const unkey = await UnkeyRatelimit({
+      const success = await UnkeyRatelimit({
         namespace: "user.get",
         limit: 3,
         duration: 5,
         userId: ctx.session.user.id,
       });
-      if (!unkey) {
+      if (!success) {
         return new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
       const user = await ctx.db.query.users.findFirst({
