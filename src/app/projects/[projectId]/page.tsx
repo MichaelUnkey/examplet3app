@@ -33,28 +33,17 @@ export default async function Page({
 									width={1920}
 									height={1080}
 								/>
-								
 							</div>
 						</div>
 						<div className="flex flex-col w-full">
 							<div className=" gap-4 pl-6">
 								<p className="my-auto font-semibold">Project Name:</p>
 								<p className="my-auto ml-4">{project?.projectName}</p>
-								{/* <UpdateProjectName
-									projectId={params.projectId}
-									name={project?.projectName ?? ""}
-								/> */}
 							</div>
 
 							<div className="relative mt-4 gap-4 pl-6">
 								<p className="my-auto font-semibold">Category:</p>
 								<p className="my-auto ml-4">{project?.category}</p>
-								{/* <Button
-									variant={"ghost"}
-									className="h-22 w-22 px-2 rounded-xl shadow-md shadow-slate-600 border border-slate-400"
-								>
-									<Edit2Icon className="" size={14} /> */}
-								{/* </Button> */}
 							</div>
 							<div className="mt-6 gap-4 pl-6">
 								<p className="font-semibold text-nowrap">
@@ -63,16 +52,10 @@ export default async function Page({
 								<p className="ml-4 my-auto text-wrap break-words">
 									{project?.projectDescription}
 								</p>
-								{/* <Button
-									variant={"ghost"}
-									className="max-h-22 max-w-22 px-2 rounded-xl shadow-md shadow-slate-600 border border-slate-400 "
-								>
-									<Edit2Icon className="" size={14} />
-								</Button> */}
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col mt-4 bg-slate-100 rounded-lg pt-8">
+					<div className="flex flex-col mt-4 bg-white rounded-lg pt-8">
 						{stepList.map((step) => {
 							return (
 								<div key={step.id} className="flex flex-col mt-2 pl-6 gap-1">

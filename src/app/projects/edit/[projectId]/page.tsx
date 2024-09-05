@@ -88,7 +88,8 @@ export default async function Page({
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col mt-4 bg-slate-100 rounded-lg pt-8">
+					<StepForm project={{projectId: project?.id ?? "", stepCount: steps?.length ?? 0}} />
+					<div className="flex flex-col mt-4 bg-white rounded-lg pt-8">
 						<div className="relaltive">
 							{steps ? steps?.map((step) => {
 								return (
@@ -124,10 +125,10 @@ export default async function Page({
 								);
 							}) : null}
 						</div>
-						<div className="max-w-96 bg-white mx-auto rounded-xl">
-							<StepForm project={{projectId: project?.id ?? "", stepCount: steps?.length ?? 0}} />
-						</div>
+						
+							
 					</div>
+					
 				</div>
 			</div>
 		</HydrateClient>

@@ -18,6 +18,9 @@ import { toast } from "./ui/toaster";
 import { api } from "~/trpc/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Dialog } from "@radix-ui/react-dialog";
+import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Edit2Icon, SaveIcon } from "lucide-react";
 
 const ACCEPTED_IMAGE_TYPES = ["image/*,.jpeg", "image/*,.jpg", "image/*,.png"];
 const formSchema = z.object({
@@ -39,12 +42,13 @@ const formSchema = z.object({
 type ProjectType = {
 	projectId: string;
 	stepCount: number;
-}
+};
 export function StepForm({
 	project,
 }: { project: ProjectType }): React.JSX.Element {
 	const [stepImage, setStepImage] = useState<string>();
 	const [stepNumber, setStepNumber] = useState<number>(project.stepCount + 1);
+	const [open, setOpen] = useState(false);
 	const router = useRouter();
 	const createStep = api.step.create.useMutation({
 		onSuccess: () => {
@@ -55,8 +59,8 @@ export function StepForm({
 			toast(`Step Creation Failed ${error.message}`);
 		},
 	});
-	if(project.projectId === undefined) {
-		return <div>Project ID is undefined</div>
+	if (project.projectId === undefined) {
+		return <div>Project ID is undefined</div>;
 	}
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -100,77 +104,111 @@ export function StepForm({
 			image: stepImage,
 		});
 		setStepNumber(stepNumber + 1);
+		setOpen(false);
 		router.refresh();
 		form.reset();
 		form.setValue("title", "");
 		form.setValue("description", "");
+		form.setValue("image", undefined);
 	}
 	return (
-		<div className="mx-auto flex flex-col mt-12 w-full px-6 text-center">
-			<h1 className="mb-6 text-2xl font-semibold">Add Step</h1>
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-					<hr className="border border-white/10" />
-					<FormField
-						control={form.control}
-						name="title"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Title</FormLabel>
-								<FormControl>
-									<Input placeholder="Title" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<hr className="border border-white/10" />
-					<FormField
-						control={form.control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Description</FormLabel>
-								<Textarea
-									placeholder="Description"
-									{...field}
-									className="to-slate-900"
-								/>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<hr className="border border-white/10" />
-					<div className="flex flex-row gap-6 pt-4">
-						<FormField
-							control={form.control}
-							name="image"
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										<Input
-											multiple={false}
-											onChange={(e) =>
-												handleImageChange(e.target.files as FileList)
-											}
-											type="file"
-										/>
-									</FormControl>
-									<FormMessage className="mt-4 text-red-600" />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<hr className="border border-white/10" />
+
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogTrigger asChild>
 					<Button
-						disabled={!form.formState.isValid}
-						type="submit"
-						className="border border-white disabled:border-red-600"
+						variant={"ghost"}
+						className="mt-4 bg-white text-black h-22 w-22 px-2 rounded-xl shadow-md shadow-slate-600 border border-slate-400"
 					>
-						Next
+						Add Step
 					</Button>
-				</form>
-			</Form>
-		</div>
+				</DialogTrigger>
+				<DialogContent className="sm:max-w-md bg-white">
+					<DialogHeader>
+						<DialogTitle>Add Step</DialogTitle>
+					</DialogHeader>
+					<div className="flex items-center space-x-2">
+						<div className="grid flex-1 gap-2">
+							<Form {...form}>
+								<form
+									onSubmit={form.handleSubmit(onSubmit)}
+									className="space-y-4"
+								>
+									<hr className="border border-white/10" />
+									<FormField
+										control={form.control}
+										name="title"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Title</FormLabel>
+												<FormControl>
+													<Input placeholder="Title" {...field} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<hr className="border border-white/10" />
+									<FormField
+										control={form.control}
+										name="description"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Description</FormLabel>
+												<Textarea
+													placeholder="Description"
+													{...field}
+													className="to-slate-900"
+												/>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<hr className="border border-white/10" />
+									<div className="flex flex-row gap-6 pt-4">
+										<FormField
+											control={form.control}
+											name="image"
+											render={({ field }) => (
+												<FormItem>
+													<FormControl>
+														<Input
+															multiple={false}
+															onChange={(e) =>
+																handleImageChange(e.target.files as FileList)
+															}
+															type="file"
+														/>
+													</FormControl>
+													<FormMessage className="mt-4 text-red-600" />
+												</FormItem>
+											)}
+										/>
+									</div>
+									<hr className="border border-white/10" />
+									<Button
+									type="submit"
+									size="sm"
+									className="absolute bottom-6 right-8 px-3shadow shadow-slate-600 inline-block"
+								>
+									<span className="my-auto font-semibold text-base">Save</span>
+									<SaveIcon className="h-4 w-4 inline ml-2 my-auto mb-1" />
+								</Button>
+								</form>
+							</Form>
+						</div>
+					</div>
+					<DialogFooter className="sm:justify-start">
+						<DialogClose asChild>
+							<Button
+								type="button"
+								variant="secondary"
+								className="shadow shadow-slate-600 bg-slate-200 text-base"
+							>
+								Cancel
+							</Button>
+						</DialogClose>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 	);
 }
