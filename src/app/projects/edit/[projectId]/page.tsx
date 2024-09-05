@@ -36,6 +36,7 @@ export default async function Page({
 				</div>
 				<div className="w-full flex flex-col px-4 mt-2">
 					<div className="flex flex-row items-start [&>*]:text-slate-900 justify-center pt-4 pb-8 bg-white w-full p-4 mx-auto rounded-lg ">
+						{project?.projectImage ? (
 						<div className="flex flex-col shrink w-1/2 object-contain">
 							<div className="relative overflow-hidden w-full h-80">
 								<Image
@@ -48,6 +49,7 @@ export default async function Page({
 								<EditImage projectId={project?.id ?? ""} />
 							</div>
 						</div>
+						):null}
 						<div className="flex flex-col w-full gap-4">
 							<div className="relative pl-6">
 								<p className="font-semibold">Project Name:</p>

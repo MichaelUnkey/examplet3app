@@ -146,15 +146,15 @@ export function ProjectForm(): React.JSX.Element {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="bg-slate-200 shadow-inner shadow-slate-200">
-                    <SelectItem value="Art">Art</SelectItem>
-                    <SelectItem value="Cosplay">Cosplay</SelectItem>
-                    <SelectItem value="Coding">Coding</SelectItem>
-                    <SelectItem value="Robotics">Robotics</SelectItem>
-                    <SelectItem value="Electronics">Electronics</SelectItem>
-                    <SelectItem value="Tools">Tools</SelectItem>
-                    <SelectItem value="Woodworking">Woodworking</SelectItem>
-                    <SelectItem value="Mechanical">Mechanical</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Art" className="active:bg-white hover:bg-white">Art</SelectItem>
+                    <SelectItem value="Cosplay" className="active:bg-white hover:bg-white">Cosplay</SelectItem>
+                    <SelectItem value="Coding" className="active:bg-white hover:bg-white">Coding</SelectItem>
+                    <SelectItem value="Robotics" className="active:bg-white hover:bg-white">Robotics</SelectItem>
+                    <SelectItem value="Electronics" className="active:bg-white hover:bg-white">Electronics</SelectItem>
+                    <SelectItem value="Tools" className="active:bg-white hover:bg-white">Tools</SelectItem>
+                    <SelectItem value="Woodworking" className="active:bg-white hover:bg-white">Woodworking</SelectItem>
+                    <SelectItem value="Mechanical" className="active:bg-white hover:bg-white">Mechanical</SelectItem>
+                    <SelectItem value="Other" className="active:bg-white hover:bg-white">Other</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
