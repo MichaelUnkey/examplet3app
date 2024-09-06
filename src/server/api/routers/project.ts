@@ -42,7 +42,7 @@ export const projectRouter = createTRPCRouter({
       }
       return { projectId: project.projectId };
     }),
-  getUserProjects: protectedProcedure.query(async ({ ctx }) => {
+  getUserProjects: rateLimitedProcedure({ limit: 3, duration: 5 }).query(async ({ ctx }) => {
     const success = await UnkeyRatelimit({
       namespace: "project.get.userProjects",
       limit: 3,
@@ -108,7 +108,7 @@ export const projectRouter = createTRPCRouter({
       });
       return project;
     }),
-  editProjectName: protectedProcedure
+  editProjectName: rateLimitedProcedure({ limit: 3, duration: 5 })
     .input(
       z.object({
         projectId: z.string().min(3),
@@ -140,7 +140,7 @@ export const projectRouter = createTRPCRouter({
       }
       return res;
     }),
-  editProjectImage: protectedProcedure
+  editProjectImage: rateLimitedProcedure({ limit: 3, duration: 5 })
     .input(
       z.object({
         projectId: z.string().min(3),
@@ -172,7 +172,7 @@ export const projectRouter = createTRPCRouter({
       }
       return res.rowsAffected === 1;
     }),
-  editProjectCategory: protectedProcedure
+  editProjectCategory: rateLimitedProcedure({ limit: 3, duration: 5 })
     .input(
       z.object({
         projectId: z.string().min(3),
@@ -204,7 +204,7 @@ export const projectRouter = createTRPCRouter({
       }
       return res.rowsAffected === 1;
     }),
-  editProjectDescription: protectedProcedure
+  editProjectDescription: rateLimitedProcedure({ limit: 3, duration: 5 })
     .input(
       z.object({
         projectId: z.string().min(3),

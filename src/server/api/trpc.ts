@@ -157,6 +157,7 @@ export const rateLimitedProcedure = ({
 
     return opts.next({
       ctx: {
+        ...opts.ctx,
         remaining: ratelimit.remaining,
       },
     });

@@ -3,14 +3,14 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import {
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
+  rateLimitedProcedure,
 } from "~/server/api/trpc";
 import { steps } from "~/server/db/schema";
 import { UnkeyRatelimit } from "~/server/ratelimit";
 
 export const stepsRouter = createTRPCRouter({
-  create: protectedProcedure
+  create: rateLimitedProcedure({ limit: 1, duration: 5 })
     .input(
       z.object({
         title: z.string().min(3),
@@ -27,7 +27,6 @@ export const stepsRouter = createTRPCRouter({
         duration: 5,
         userId: ctx.session.user.id,
       });
-      
       if (!success) {
         return new TRPCError({ code: "TOO_MANY_REQUESTS" });
       }
@@ -44,16 +43,6 @@ export const stepsRouter = createTRPCRouter({
           updatedAt: new Date(Date.now()),
         })
         .returning({ insertedId: steps.id })
-        // .then(async (res) => {
-        //   if (res[0]?.insertedId) {
-        //     const project = await ctx.db
-        //       .update(projects)
-        //       .set({
-        //         steps: sql`(json_array_append(steps, ${res[0].insertedId}))`,
-        //       })
-        //       .where(eq(projects.id, input.projectId))
-        //       .returning({ steps: projects.steps });
-        //   }
           if (!step) {
             throw new TRPCError({
               message: "Error inserting into DB",
@@ -61,7 +50,6 @@ export const stepsRouter = createTRPCRouter({
             });
           }
           return step;
-    
     }),
   getStepByProjectId: publicProcedure
     .input(
@@ -81,7 +69,7 @@ export const stepsRouter = createTRPCRouter({
       }
       return stepList;
     }),
-  editStep: protectedProcedure
+  editStep: rateLimitedProcedure({ limit: 3, duration: 5 })
     .input(
       z.object({
         stepId: z.string().min(3),
@@ -113,7 +101,7 @@ export const stepsRouter = createTRPCRouter({
         }
       return res.rowsAffected === 1;
     }),
-  editStepImage: protectedProcedure
+  editStepImage: rateLimitedProcedure({ limit: 3, duration: 5 })
     .input(
       z.object({
         stepId: z.string().min(3),
