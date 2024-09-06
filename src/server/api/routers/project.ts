@@ -19,6 +19,7 @@ export const projectRouter = createTRPCRouter({
 				projectImage: z.string().optional(),
 			}),
 		)
+		.use({namespace:"ceate.project",limit:3 ,duration:5})
 		.mutation(async ({ ctx, input }) => {
 			const success = await UnkeyRatelimit({
 				namespace: "project.create",
@@ -155,6 +156,7 @@ export const projectRouter = createTRPCRouter({
 				image: z.string(),
 			}),
 		)
+		.use(limitProcedure())
 		.mutation(async ({ ctx, input }) => {
 			const success = await UnkeyRatelimit({
 				namespace: "project.edit.projectImage",
@@ -190,8 +192,8 @@ export const projectRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const success = await UnkeyRatelimit({
 				namespace: "project.edit.projectCategory",
-				limit: 1,
-				duration: 1000000000,
+				limit: 3,
+				duration: 5,
 				userId: ctx.session.user.id,
 			});
 			if (!success) {

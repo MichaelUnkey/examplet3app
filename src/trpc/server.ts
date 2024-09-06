@@ -7,7 +7,12 @@ import { cache } from "react";
 import { createCaller, type AppRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
 import { createQueryClient } from "./query-client";
-
+type RatelimitType = {
+	namespace: string;
+	limit: number;
+	duration: number;
+	userId: string;
+}
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a tRPC call from a React Server Component.
@@ -18,6 +23,9 @@ const createContext = cache(() => {
 
   return createTRPCContext({
     headers: heads,
+    namespace: "",
+    limit: 0,
+    duration: 0,
   });
 });
 
