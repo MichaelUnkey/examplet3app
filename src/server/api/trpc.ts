@@ -29,10 +29,6 @@ import { Ratelimit } from "@unkey/ratelimit";
  */
 export const createTRPCContext = async (opts: {
 	headers: Headers;
-	namespace: string;
-	limit: number;
-	duration: number;
-	ratelimited: boolean;
 }) => {
 	const session = await getServerAuthSession();
 
@@ -104,24 +100,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 	const end = Date.now();
 	return result;
 });
-const rateMiddleware = t.middleware(async ({ next, ctx }) => {
-	const { namespace, limit, duration } = ctx;
-	if (ctx?.session?.user) {
-		const unkey = new Ratelimit({
-			rootKey: env.UNKEY_ROOT_KEY,
-			namespace: namespace,
-			limit: limit ?? 3,
-			duration: duration ? `${duration}s` : `${5}s`,
-		});
-		const { success } = await unkey.limit(ctx.session.user.id);
-		return next({
-			ctx: {
-				ratelimited: success,
-			},
-		});
-	}
-	return next();
-});
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -151,5 +130,4 @@ export const protectedProcedure = t.procedure
 				session: { ...ctx.session, user: ctx.session.user },
 			},
 		});
-	})
-	.use(rateMiddleware);
+	});
