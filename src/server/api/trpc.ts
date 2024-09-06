@@ -27,16 +27,14 @@ import { Ratelimit } from "@unkey/ratelimit";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: {
-	headers: Headers;
-}) => {
-	const session = await getServerAuthSession();
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await getServerAuthSession();
 
-	return {
-		db,
-		session,
-		...opts,
-	};
+  return {
+    db,
+    session,
+    ...opts,
+  };
 };
 
 /**
@@ -48,17 +46,17 @@ export const createTRPCContext = async (opts: {
  */
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
-	transformer: superjson,
-	errorFormatter({ shape, error }) {
-		return {
-			...shape,
-			data: {
-				...shape.data,
-				zodError:
-					error.cause instanceof ZodError ? error.cause.flatten() : null,
-			},
-		};
-	},
+  transformer: superjson,
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.cause instanceof ZodError ? error.cause.flatten() : null,
+      },
+    };
+  },
 });
 
 /**
@@ -89,16 +87,16 @@ export const createTRPCRouter = t.router;
  * network latency that would occur in production but not in local development.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
-	const start = Date.now();
+  const start = Date.now();
 
-	if (t._config.isDev) {
-		// artificial delay in dev
-		const waitMs = Math.floor(Math.random() * 400) + 100;
-		await new Promise((resolve) => setTimeout(resolve, waitMs));
-	}
-	const result = await next();
-	const end = Date.now();
-	return result;
+  if (t._config.isDev) {
+    // artificial delay in dev
+    const waitMs = Math.floor(Math.random() * 400) + 100;
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+  const result = await next();
+  const end = Date.now();
+  return result;
 });
 
 /**
@@ -119,15 +117,47 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
-	.use(timingMiddleware)
-	.use(({ ctx, next }) => {
-		if (!ctx.session || !ctx.session.user) {
-			throw new TRPCError({ code: "UNAUTHORIZED" });
-		}
-		return next({
-			ctx: {
-				// infers the `session` as non-nullable
-				session: { ...ctx.session, user: ctx.session.user },
-			},
-		});
-	});
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });
+
+export const rateLimitedProcedure = ({
+  limit,
+  duration,
+}: {
+  limit: number;
+  duration: number;
+}) =>
+  protectedProcedure.use(async (opts) => {
+    const unkey = new Ratelimit({
+      rootKey: env.UNKEY_ROOT_KEY,
+      namespace: `trpc_${opts.path}`,
+      limit: limit ?? 3,
+      duration: duration ? `${duration}s` : `${5}s`,
+    });
+
+    const ratelimit = await unkey.limit(opts.ctx.session.user.id);
+
+    if (!ratelimit.success) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+
+        message: JSON.stringify(ratelimit),
+      });
+    }
+
+    return opts.next({
+      ctx: {
+        remaining: ratelimit.remaining,
+      },
+    });
+  });
