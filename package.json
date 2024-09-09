@@ -1,5 +1,5 @@
 {
-  "name": "examplet3app",
+  "name": "unkey_ratelimiting_with_trpc_and_drizzle",
   "version": "0.1.0",
   "private": true,
   "type": "module",

@@ -8,7 +8,7 @@ import { Categories } from "./components/categories";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-	title: "Openapi Example App",
+	title: "Unkey ratelimiting with TRPC + Drizzle",
 	description: "Example app using Nextjs, Drizzle, Unkey, trpc and openapi",
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

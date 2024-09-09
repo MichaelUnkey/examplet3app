@@ -1,29 +1,37 @@
-# Create T3 App
+# Unkey ratelimiting with TRPC + Drizzle
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app` and `Unkey ratelimiting`.
 
-## What's next? How do I make an app with this?
+## Getting Started
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- You will need to make a new root key at [unkey.com](https://app.unkey.com). If you do not already have an account, the onboarding flow will create one for you. Take the root key and create a `.env` file in the root of the project. Add the following line to the file:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+```bash
+UNKEY_ROOT_KEY=your_root_key_here
+```
 
+- Add a new github OAuth app and add the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET
+
+``` bash
+GITHUB_CLIENT_ID=your_client_id_here
+GITHUB_CLIENT_SECRET=your_client_secret_here
+```
+
+## Used in this project
+
+From `T3 Stack`:
+
+- [T3 Stack](https://create.t3.gg/)
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
 - [Drizzle](https://orm.drizzle.team)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+  
+From `Unkey`:
 
+- [Unkey Ratelimiting](https://www.unkey.com/docs/libraries/ts/ratelimit)
+  
 ## Learn More
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Learn more about [Unkey services](https://www.unkey.com/docs/introduction)

@@ -150,7 +150,6 @@ export const rateLimitedProcedure = ({
     if (!ratelimit.success) {
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
-
         message: JSON.stringify(ratelimit),
       });
     }
